@@ -12,7 +12,7 @@
 
 ConfigurationNode::ConfigurationNode() :
 		HomieNode("Config", "cfg") {
-	subscribeToAll();
+	//subscribeToAll();
 }
 
 

@@ -13,85 +13,95 @@
 #include "gfx_resources.h"
 #include "images.h"
 
+#include <LoggerNode.h>
+
 OLEDStatusIndicator::OLEDStatusIndicator() :
-		display(0x3c, SDA, SCL), ui(&display), wifi(false), wifi_quality(-1), mqtt(0),
-		updateNecessary(true), cycle_time(500) {
+		display(0x3c, SDA, SCL), ui(&display), wifi(false), wifi_quality(-1), mqtt(false),
+		cfgmode(false), updateNecessary(true), cycle_time(500) {
 
 }
 
 void OLEDStatusIndicator::Event(HomieEvent event) {
+	Serial.begin(115200);
+	Serial.flush();
+	cfgmode = false;
 	switch (event) {
-	case HOMIE_CONFIGURATION_MODE:
+	case HomieEvent::CONFIGURATION_MODE:
 		last_status = "Configuration mode started";
+		cfgmode = true;
 		break;
-	case HOMIE_NORMAL_MODE:
+	case HomieEvent::NORMAL_MODE:
 		last_status = "Normal mode started";
 		break;
-	case HOMIE_OTA_STARTED:
+	case HomieEvent::OTA_STARTED:
 		last_status = "OTA started";
 		break;
-	case HOMIE_OTA_FAILED:
+	case HomieEvent::OTA_FAILED:
 		last_status = "OTA failed";
 		break;
-	case HOMIE_OTA_SUCCESSFUL:
+	case HomieEvent::OTA_SUCCESSFUL:
 		last_status = "OTA successful";
 		break;
-	case HOMIE_ABOUT_TO_RESET:
+	case HomieEvent::ABOUT_TO_RESET:
 		last_status = "About to reset";
 		break;
-	case HOMIE_WIFI_CONNECTED:
+	case HomieEvent::WIFI_CONNECTED:
 		last_status = "Wi-Fi connected";
 		wifi = true;
 		break;
-	case HOMIE_WIFI_DISCONNECTED:
+	case HomieEvent::WIFI_DISCONNECTED:
 		last_status = "Wi-Fi disconnected";
 		wifi = false;
 		break;
-	case HOMIE_MQTT_CONNECTED:
+	case HomieEvent::MQTT_CONNECTED:
 		last_status = "MQTT connected";
 		mqtt = true;
 		break;
-	case HOMIE_MQTT_DISCONNECTED:
+	case HomieEvent::MQTT_DISCONNECTED:
 		last_status = "MQTT disconnected";
 		mqtt = false;
 		break;
 	}
 	updateNecessary = true;
+	Serial.printf("Event: %s", last_status.c_str());
+	if (mqtt)
+		LN.log(__PRETTY_FUNCTION__,LoggerNode::INFO, "MQTT connected");
+	Serial.flush();
 
 }
 
 void OLEDStatusIndicator::setup() {
-	ui.setTargetFPS(30);
+	ui.setTargetFPS(10);
 
 	// Customize the active and inactive symbol
-	ui.setActiveSymbol(activeSymbol);
-	ui.setInactiveSymbol(inactiveSymbol);
+//	ui.setActiveSymbol(activeSymbol);
+//	ui.setInactiveSymbol(inactiveSymbol);
 
 	// You can change this to
 	// TOP, LEFT, BOTTOM, RIGHT
-	ui.setIndicatorPosition(BOTTOM);
+//	ui.setIndicatorPosition(BOTTOM);
 
 	// Defines where the first frame is located in the bar.
-	ui.setIndicatorDirection(LEFT_RIGHT);
+//	ui.setIndicatorDirection(LEFT_RIGHT);
 
 	// You can change the transition that is used
 	// SLIDE_LEFT, SLIDE_RIGHT, SLIDE_UP, SLIDE_DOWN
-	ui.setFrameAnimation(SLIDE_LEFT);
+//	ui.setFrameAnimation(SLIDE_LEFT);
 	ui.disableAutoTransition();
 	ui.disableAllIndicators();
 	ui.init();
 
-	display.setLogBuffer(4,200);
+//	display.setLogBuffer(4,200);
 	display.flipScreenVertically();
 
-	but_fwd.attach(13, INPUT_PULLUP);
-	but_fwd.interval(1);
-	but_bwd.attach(12, INPUT_PULLUP);
-	but_bwd.interval(1);
-	but_clk.attach(14, INPUT_PULLUP);
-	but_clk.interval(8);
+//	but_fwd.attach(13, INPUT_PULLUP);
+//	but_fwd.interval(1);
+//	but_bwd.attach(12, INPUT_PULLUP);
+//	but_bwd.interval(1);
+//	but_clk.attach(14, INPUT_PULLUP);
+//	but_clk.interval(8);
 
-	Homie.setLoggingPrinter(&display);
+	//Homie.setLoggingPrinter(&display);
 }
 
 void OLEDStatusIndicator::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& state, uint8_t idx) {
@@ -103,7 +113,12 @@ void OLEDStatusIndicator::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& 
 	uint8_t cycle4 = ++count % 4;
 
 	display.setFont(ArialMT_Plain_10);
-	if (wifi) {
+	if (cfgmode) {
+		display.drawXbm(0, 0, cfg_mode_width, cfg_mode_height,
+						cfg_mode_bits);
+		display.drawString(cfg_mode_width, 3, "Cfg Mode!");
+	}
+	else if (wifi) {
 		String RSSIString;
 		int32_t rssi = WiFi.RSSI();
 		RSSIString += rssi;
@@ -138,23 +153,6 @@ void OLEDStatusIndicator::loop() {
 
 	unsigned long mil = millis();
 	ui.update();
-
-	// Debounce Inputs every loop()
-	bool bw = but_bwd.update();
-	if (but_fwd.update()) bw = true;
-	if (but_clk.update()) bw = true;
-	if (bw)
-	{
-		updateNecessary = true;
-		if (but_fwd.rose() && but_bwd.rose()) err_count++;
-		if (but_fwd.rose() && but_bwd.read()) {
-			fb_count--;
-		}
-		if (but_bwd.rose() && but_fwd.read()) {
-			fb_count++;
-		}
-
-	}
 
 	// Check for full cycle
 	if (mil - last > cycle_time) {

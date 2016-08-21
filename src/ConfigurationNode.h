@@ -13,7 +13,7 @@
 class ConfigurationNode: public HomieNode {
 public:
 	ConfigurationNode();
-	virtual void setup();
+	virtual void setup() override;
 	//void loop(); // loop() not necessary
 
 	uint16_t getValveDuration(uint_fast8_t v) const {

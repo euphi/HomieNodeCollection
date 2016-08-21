@@ -11,7 +11,6 @@
 #include <Homie.h>
 #include <SSD1306.h>
 
-#include <Bounce2.h>
 #include <OLEDDisplayUi.h>
 #include <OLEDOverlay.h>
 
@@ -31,6 +30,7 @@ private:
 
 	bool mqtt;
 	bool wifi;
+	bool cfgmode;
 	int wifi_quality;
 
 	SSD1306Wire display;

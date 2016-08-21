@@ -11,10 +11,12 @@
 
 SensorNode::SensorNode() :
 	HomieNode("Sensor", "sensor_t_h",
-		[](String property, String value) { return false; }),
+		[](String property, HomieRange range, String value) { return false; }),
 	lastLoop8000ms(0), htu() {
+	advertise("degrees");
+	advertise("rel%");
 
-	subscribeToAll();
+	//subscribeToAll();
 }
 
 void SensorNode::setup() {

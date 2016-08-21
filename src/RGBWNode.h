@@ -9,8 +9,10 @@
 #define SRC_RGBWNODE_H_
 
 #include <HomieNode.hpp>
+#include <OLEDFrame.h>
+#include <OLEDOverlay.h>
 
-class RGBWNode: public HomieNode {
+class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 
 	static const float percent_to_pwm;
 
@@ -27,7 +29,15 @@ class RGBWNode: public HomieNode {
 	const char rgbw_id[4] = {'r', 'g', 'b', 'w'};
 	uint16_t rgbw_values[4] = { 0, 0, 0, 0 };
 
-    virtual bool handleInput(String const &property, String const &value);
+    // HomieNode
+	virtual bool handleInput(String const &property, HomieRange range, String const &value) override;
+
+	// OLEDFrame
+	virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y) override;
+
+	// OLEDOverlay
+	virtual void drawOverlay(OLEDDisplay& display,  OLEDDisplayUiState& state, uint8_t idx) override;
+
 
 private:
     void updateLEDs() const;

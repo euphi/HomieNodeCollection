@@ -17,19 +17,19 @@ class RelaisNode : public HomieNode, OLEDFrame {
 public:
 	RelaisNode();
 protected:
-  virtual void setup();
+  virtual void setup() override;
 
-  virtual void loop();
+  virtual void loop() override;
 
-  virtual void onReadyToOperate();
+  virtual void onReadyToOperate() override;
 
-  virtual bool handleInput(String const &property, String const &value);
+  virtual bool handleInput(String const &property, HomieRange range, String const &value) override;
 
-  virtual void drawFrame(OLEDDisplay *display,  OLEDDisplayUiState* state, int16_t x, int16_t y);
+  virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y);
 
 
 private:
-  void updateRelais() const;
+  void updateRelais();
 
   uint8_t relais_bitset;
   PCF8574 io;

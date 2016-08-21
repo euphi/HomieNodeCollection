@@ -15,7 +15,7 @@ class LoggerNode: public HomieNode {
 public:
 	LoggerNode();
 
-	virtual void setup();
+	virtual void setup() override;
 	//void loop(); // loop() not necessary
 
 	enum E_Loglevel {
