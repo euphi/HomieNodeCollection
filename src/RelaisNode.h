@@ -29,7 +29,7 @@ protected:
 
 
 private:
-  void updateRelais();
+  void updateRelais(uint8_t updateMask=0xFF);
 
   uint8_t relais_bitset;
   PCF8574 io;

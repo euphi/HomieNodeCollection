@@ -36,12 +36,14 @@ bool RelaisNode::handleInput(String const &property, HomieRange range, String co
 	bool on = value.equalsIgnoreCase("ON");
 	LN.logf("RelaisNode::handleInput()", LoggerNode::INFO,
 			"Receive command to switch %x to %s.", id, on ? "On" : "Off");
+
+	uint8_t selected_bit = (1 << (id-1));
 	if (on) {
-		relais_bitset |= (1 << (id-1));
+		relais_bitset |= selected_bit;
 	} else	{
-		relais_bitset &= ~(1<< (id-1));
+		relais_bitset &= ~selected_bit;
 	}
-	updateRelais();
+	updateRelais(selected_bit);
 	return true;
 }
 
@@ -64,12 +66,19 @@ void RelaisNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state,	int1
 
 
 
-void RelaisNode::updateRelais() {
-	LN.logf("RelaisNode::updateValves()", LoggerNode::INFO, "Value: %x",
-			relais_bitset);
+void RelaisNode::updateRelais(uint8_t updateMask) {
+	static uint8_t last = 0x00;
+	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x", relais_bitset);
 	io.write8(relais_bitset);
 	for (uint_fast8_t i = 0; i < 8; i++) {
-		bool on = (relais_bitset & (1 << i) != 0);
-		Homie.setNodeProperty(*this, String(i), on ? "On" : "Off", true);
+		bool on = ((relais_bitset & (1 << i)) != 0);
+		bool changed = on ^ (((last & (1 << i)) != 0));
+		//LN.logf("UpdateRelais", LoggerNode::DEBUG, "\nRelais: %02x\n  Last: %02x\n1 << i: %02x (%d)\nOn:%s, changed:%s", relais_bitset, last, (1<<i), i, on?"true":"false", changed?"true":"false");
+		if (changed || ((updateMask & (1 << i)) != 0)) {
+			String value("in_");
+			value.concat(i + 1);
+			Homie.setNodeProperty(*this, value, on ? "On" : "Off", 1, true);
+		}
 	}
+	last = relais_bitset;
 }
