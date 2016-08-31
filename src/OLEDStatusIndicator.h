@@ -19,8 +19,6 @@ public:
 	//OLEDStatusIndicator(SSD1306& display); // TODO: Allow to set reference to Display (or abstraction layer)
 	OLEDStatusIndicator();
 	void Event(HomieEvent event);
-	void setup();
-	void loop();
 
 	virtual void drawOverlay(OLEDDisplay& display,  OLEDDisplayUiState& state, uint8_t idx);
 
@@ -33,8 +31,8 @@ private:
 	bool cfgmode;
 	int wifi_quality;
 
-	SSD1306Wire display;
-	OLEDDisplayUi ui;
+	//SSD1306Wire display;
+	//OLEDDisplayUi ui;
 
 	bool updateNecessary;
 	String last_status;

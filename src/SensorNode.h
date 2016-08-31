@@ -28,6 +28,18 @@ public:
 	void setup();
 	void loop();
 
+	float getHumidity() const {
+		return hum;
+	}
+
+	float getTemperatur() const {
+		return temp;
+	}
+
+private:
+	float temp = NAN;
+	float hum = NAN;
+
 };
 
 #endif /* SRC_SENSORNODE_H_ */

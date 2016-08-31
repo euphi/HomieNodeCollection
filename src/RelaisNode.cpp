@@ -8,16 +8,29 @@
 #include <RelaisNode.h>
 
 #include <LoggerNode.h>
+#include <Homie.hpp>
 
 RelaisNode::RelaisNode() :
-		HomieNode("Relais", "switch8"), relais_bitset(0x55), io(0x20) {
+		HomieNode("Relais", "switch8"), relais_bitset(0x55) /*, io(0x20) */ {
 	advertiseRange("in",1,8)->settable();
 }
 
 void RelaisNode::setup() {
+	encoder.begin(12,13,4).range(1,8,true);
+	encoder.trace(Serial);
+	pinMode(12, INPUT_PULLUP);
+	pinMode(13, INPUT_PULLUP);
 }
 
 void RelaisNode::loop() {
+	static int laststate = 0;
+
+	encoder.cycle();
+	if (encoder.state() != laststate) {
+		laststate = encoder.state();
+		LN.logf(__PRETTY_FUNCTION__, LoggerNode::DEBUG, "Encoder state: %d", laststate);
+	}
+
 }
 
 void RelaisNode::onReadyToOperate() {
@@ -49,11 +62,13 @@ bool RelaisNode::handleInput(String const &property, HomieRange range, String co
 
 
 void RelaisNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state,	int16_t x, int16_t y) {
+	bool blink = ((millis() >> 7) % 2) != 0;
 	display.setFont(ArialMT_Plain_16);
 	display.drawString(0+x,16,"Relais");
 	for (uint_fast8_t i=0; i<8;i++) {
 		int16_t xpos = (i*8)+4;
 		int16_t ypos = 40;
+		if (((i + 1) == encoder.state()) && blink) continue;
 		bool on = (relais_bitset & (1 << i)) != 0;
 		display.drawRect(xpos,ypos,on?6:5,on?6:5);
 		if (on) {
@@ -69,7 +84,7 @@ void RelaisNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state,	int1
 void RelaisNode::updateRelais(uint8_t updateMask) {
 	static uint8_t last = 0x00;
 	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x", relais_bitset);
-	io.write8(relais_bitset);
+	//io.write8(relais_bitset);
 	for (uint_fast8_t i = 0; i < 8; i++) {
 		bool on = ((relais_bitset & (1 << i)) != 0);
 		bool changed = on ^ (((last & (1 << i)) != 0));

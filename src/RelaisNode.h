@@ -11,9 +11,11 @@
 #include <HomieNode.hpp>
 #include <OLEDFrame.h>
 
-#include <pcf8574.h>
+#include <Atm_encoder.hpp>
 
-class RelaisNode : public HomieNode, OLEDFrame {
+//#include <pcf8574.h>
+
+class RelaisNode : public HomieNode , OLEDFrame {
 public:
 	RelaisNode();
 protected:
@@ -32,7 +34,9 @@ private:
   void updateRelais(uint8_t updateMask=0xFF);
 
   uint8_t relais_bitset;
-  PCF8574 io;
+
+  Atm_encoder encoder;
+//  PCF8574 io;
 
 };
 

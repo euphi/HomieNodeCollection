@@ -8,7 +8,7 @@
 #ifndef SRC_LOGGERNODE_H_
 #define SRC_LOGGERNODE_H_
 
-#include "Homie.hpp"
+#include "HomieNode.hpp"
 
 
 class LoggerNode: public HomieNode {

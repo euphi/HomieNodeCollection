@@ -6,6 +6,7 @@
  */
 
 #include "LoggerNode.h"
+#include <Homie.hpp>
 
 LoggerNode::LoggerNode() :
 		m_loglevel(DEBUG), HomieNode("Log", "Logger") {
