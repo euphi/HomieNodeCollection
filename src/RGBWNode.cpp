@@ -22,10 +22,10 @@ RGBWNode::RGBWNode() : 	HomieNode("LED", "RGBW"), initialized(false) {
 //		Serial.printf("Registered RGWNode property no. %d to %s.\n", i, cb);
 //	}
 //	Serial.flush();
-	advertise("r")->settable();
-	advertise("g")->settable();
-	advertise("b")->settable();
-	advertise("w")->settable();
+	advertise("r").settable();
+	advertise("g").settable();
+	advertise("b").settable();
+	advertise("w").settable();
 
 
 }
@@ -61,7 +61,7 @@ void RGBWNode::PublishState(uint8_t id) const {
 	if (id < R || id > W) return;
 	String id_string(rgbw_id[id]);
 	String value_string((uint16_t) round((float)rgbw_values[id]/percent_to_pwm));
-	Homie.setNodeProperty(*this, id_string, value_string,true);
+	Homie.setNodeProperty(*this, id_string).send(value_string);
 }
 
 void RGBWNode::setup() {

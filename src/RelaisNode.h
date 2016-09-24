@@ -9,34 +9,30 @@
 #define SRC_RELAISNODE_H_
 
 #include <HomieNode.hpp>
-#include <OLEDFrame.h>
 
 #include <Atm_encoder.hpp>
 
-//#include <pcf8574.h>
+#include <PCF8575.h>
 
-class RelaisNode : public HomieNode , OLEDFrame {
+class RelaisNode : public HomieNode {
+
 public:
 	RelaisNode();
 protected:
-  virtual void setup() override;
-
-  virtual void loop() override;
+//  virtual void setup() override;
+//
+//  virtual void loop() override;
 
   virtual void onReadyToOperate() override;
 
   virtual bool handleInput(String const &property, HomieRange range, String const &value) override;
 
-  virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y);
-
-
 private:
-  void updateRelais(uint8_t updateMask=0xFF);
+  void updateRelais(uint16_t updateMask=0xFFFF);
 
-  uint8_t relais_bitset;
+  uint16_t relais_bitset;
 
-  Atm_encoder encoder;
-//  PCF8574 io;
+  PCF8575 io;
 
 };
 

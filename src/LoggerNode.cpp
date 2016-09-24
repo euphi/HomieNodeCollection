@@ -23,7 +23,8 @@ void LoggerNode::log(const String function, const E_Loglevel level,	const String
 	String mqtt_path(levelstring[level]);
 	mqtt_path.concat('/');
 	mqtt_path.concat(function);
-	Homie.setNodeProperty(*this, mqtt_path, text, 1, false);
+	Homie.setNodeProperty(*this, mqtt_path).setRetained(false).send(text);
+	Serial.printf("%d: %s:%s\n",millis(), mqtt_path.c_str(), text.c_str());
 }
 
 void LoggerNode::logf(const String function, const E_Loglevel level, const char* format, ...) const {

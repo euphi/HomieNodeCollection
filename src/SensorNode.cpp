@@ -37,9 +37,9 @@ void SensorNode::loop() {
 		temp = htu.readTemperature();
 		hum = htu.readHumidity();
 		lastLoop8000ms = millis();
-		Homie.setNodeProperty(*this, "degrees", String(temp));
+		Homie.setNodeProperty(*this, "degrees").send(String(temp));
 //		Homie.setNodeProperty(*this, "hPa", String(cur_press));
-		Homie.setNodeProperty(*this, "rel%",String(hum));
+		Homie.setNodeProperty(*this, "rel%").send(String(hum));
 	}
 }
 

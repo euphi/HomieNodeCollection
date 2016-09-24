@@ -11,27 +11,15 @@
 #include <Homie.hpp>
 
 RelaisNode::RelaisNode() :
-		HomieNode("Relais", "switch8"), relais_bitset(0x55) /*, io(0x20) */ {
-	advertiseRange("in",1,8)->settable();
+		HomieNode("Relais", "switch16"), relais_bitset(0x0000), io(0x20) {
+	advertiseRange("in",1,16).settable();
 }
 
-void RelaisNode::setup() {
-	encoder.begin(12,13,4).range(1,8,true);
-	encoder.trace(Serial);
-	pinMode(12, INPUT_PULLUP);
-	pinMode(13, INPUT_PULLUP);
-}
-
-void RelaisNode::loop() {
-	static int laststate = 0;
-
-	encoder.cycle();
-	if (encoder.state() != laststate) {
-		laststate = encoder.state();
-		LN.logf(__PRETTY_FUNCTION__, LoggerNode::DEBUG, "Encoder state: %d", laststate);
-	}
-
-}
+//void RelaisNode::setup() {
+//}
+//
+//void RelaisNode::loop() {
+//}
 
 void RelaisNode::onReadyToOperate() {
 	LN.log("RelaisNode", LoggerNode::DEBUG, "Ready");
@@ -40,7 +28,7 @@ void RelaisNode::onReadyToOperate() {
 
 bool RelaisNode::handleInput(String const &property, HomieRange range, String const &value) {
 	int16_t id = range.index;
-	if (id <= 0 || id > 8) {
+	if (id <= 0 || id > 16) {
 		LN.logf("RelaisNode::handleInput()", LoggerNode::ERROR,
 				"Receive unknown property %s with value %s.", property.c_str(),
 				value.c_str());
@@ -60,31 +48,31 @@ bool RelaisNode::handleInput(String const &property, HomieRange range, String co
 	return true;
 }
 
+//
+//void RelaisNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state,	int16_t x, int16_t y) {
+//	bool blink = ((millis() >> 7) % 2) != 0;
+//	display.setFont(ArialMT_Plain_16);
+//	display.drawString(0+x,16,"Relais");
+//	for (uint_fast8_t i=0; i<8;i++) {
+//		int16_t xpos = (i*8)+4;
+//		int16_t ypos = 40;
+//		if (((i + 1) == encoder.state()) && blink) continue;
+//		bool on = (relais_bitset & (1 << i)) != 0;
+//		display.drawRect(xpos,ypos,on?6:5,on?6:5);
+//		if (on) {
+//			display.drawRect(xpos+1,ypos+1,4,4);
+//			display.drawRect(xpos+2,ypos+2,2,2);
+//		}
+//	}
+//	display.drawHorizontalLine(0,60,128);
+//}
 
-void RelaisNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state,	int16_t x, int16_t y) {
-	bool blink = ((millis() >> 7) % 2) != 0;
-	display.setFont(ArialMT_Plain_16);
-	display.drawString(0+x,16,"Relais");
-	for (uint_fast8_t i=0; i<8;i++) {
-		int16_t xpos = (i*8)+4;
-		int16_t ypos = 40;
-		if (((i + 1) == encoder.state()) && blink) continue;
-		bool on = (relais_bitset & (1 << i)) != 0;
-		display.drawRect(xpos,ypos,on?6:5,on?6:5);
-		if (on) {
-			display.drawRect(xpos+1,ypos+1,4,4);
-			display.drawRect(xpos+2,ypos+2,2,2);
-		}
-	}
-	display.drawHorizontalLine(0,60,128);
-}
 
 
-
-void RelaisNode::updateRelais(uint8_t updateMask) {
+void RelaisNode::updateRelais(uint16_t updateMask) {
 	static uint8_t last = 0x00;
 	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x", relais_bitset);
-	//io.write8(relais_bitset);
+	io.write16(relais_bitset);
 	for (uint_fast8_t i = 0; i < 8; i++) {
 		bool on = ((relais_bitset & (1 << i)) != 0);
 		bool changed = on ^ (((last & (1 << i)) != 0));
@@ -92,7 +80,7 @@ void RelaisNode::updateRelais(uint8_t updateMask) {
 		if (changed || ((updateMask & (1 << i)) != 0)) {
 			String value("in_");
 			value.concat(i + 1);
-			Homie.setNodeProperty(*this, value, on ? "On" : "Off", 1, true);
+			Homie.setNodeProperty(*this, value).send(on ? "ON" : "OFF");
 		}
 	}
 	last = relais_bitset;
