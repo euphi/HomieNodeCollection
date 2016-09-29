@@ -9,6 +9,7 @@
 /* Dependencies */
 #include <Wire.h>
 #include <PCF8575.h>
+#include <LoggerNode.h>
 
 PCF8575::PCF8575(uint8_t address, bool inv) :
 		bs_output(inv?0xFFFF:0x0000), bs_input(0), bs_DDR(0xFFFF),
