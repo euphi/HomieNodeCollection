@@ -30,7 +30,7 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	uint16_t rgbw_values[4] = { 0, 0, 0, 0 };
 
     // HomieNode
-	virtual bool handleInput(String const &property, HomieRange range, String const &value) override;
+	virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
 
 	// OLEDFrame
 	virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y) override;

@@ -25,7 +25,7 @@ protected:
 
   virtual void onReadyToOperate() override;
 
-  virtual bool handleInput(String const &property, HomieRange range, String const &value) override;
+  virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
 
 private:
   void updateRelais(uint16_t updateMask=0xFFFF);

@@ -25,39 +25,39 @@ void OLEDStatusIndicator::Event(HomieEvent event) {
 	Serial.begin(115200);
 	Serial.flush();
 	cfgmode = false;
-	switch (event) {
-	case HomieEvent::CONFIGURATION_MODE:
+	switch (event.type) {
+	case HomieEventType::CONFIGURATION_MODE:
 		last_status = "Configuration mode started";
 		cfgmode = true;
 		break;
-	case HomieEvent::NORMAL_MODE:
+	case HomieEventType::NORMAL_MODE:
 		last_status = "Normal mode started";
 		break;
-	case HomieEvent::OTA_STARTED:
+	case HomieEventType::OTA_STARTED:
 		last_status = "OTA started";
 		break;
-	case HomieEvent::OTA_FAILED:
+	case HomieEventType::OTA_FAILED:
 		last_status = "OTA failed";
 		break;
-	case HomieEvent::OTA_SUCCESSFUL:
+	case HomieEventType::OTA_SUCCESSFUL:
 		last_status = "OTA successful";
 		break;
-	case HomieEvent::ABOUT_TO_RESET:
+	case HomieEventType::ABOUT_TO_RESET:
 		last_status = "About to reset";
 		break;
-	case HomieEvent::WIFI_CONNECTED:
+	case HomieEventType::WIFI_CONNECTED:
 		last_status = "Wi-Fi connected";
 		wifi = true;
 		break;
-	case HomieEvent::WIFI_DISCONNECTED:
+	case HomieEventType::WIFI_DISCONNECTED:
 		last_status = "Wi-Fi disconnected";
 		wifi = false;
 		break;
-	case HomieEvent::MQTT_CONNECTED:
+	case HomieEventType::MQTT_CONNECTED:
 		last_status = "MQTT connected";
 		mqtt = true;
 		break;
-	case HomieEvent::MQTT_DISCONNECTED:
+	case HomieEventType::MQTT_DISCONNECTED:
 		last_status = "MQTT disconnected";
 		mqtt = false;
 		break;

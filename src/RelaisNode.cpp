@@ -26,7 +26,7 @@ void RelaisNode::onReadyToOperate() {
 	updateRelais();
 }
 
-bool RelaisNode::handleInput(String const &property, HomieRange range, String const &value) {
+bool RelaisNode::handleInput(const String  &property, const HomieRange& range, const String &value) {
 	int16_t id = range.index;
 	if (id <= 0 || id > 16) {
 		LN.logf("RelaisNode::handleInput()", LoggerNode::ERROR,

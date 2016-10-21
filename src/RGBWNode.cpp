@@ -31,7 +31,7 @@ RGBWNode::RGBWNode() : 	HomieNode("LED", "RGBW"), initialized(false) {
 }
 
 
-bool RGBWNode::handleInput(String const &property, HomieRange range, String const &value) {
+bool RGBWNode::handleInput(const String& property, const HomieRange& range, const String& value) {
 	LN.logf(__PRETTY_FUNCTION__, LoggerNode::DEBUG, "Received  property %s (value=%s).", property.c_str(), value.c_str());
 	int value_int = value.toInt();
 	uint_fast8_t id = R;
