@@ -18,8 +18,10 @@ public:
 	virtual void setup() override;
 	//void loop(); // loop() not necessary
 
+	  virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
+
 	enum E_Loglevel {
-		DEBUG, INFO, ERROR, CRITICAL
+		INVALID=-1, DEBUG=0, INFO, ERROR, CRITICAL
 	};
 
 	void log(const String function, const E_Loglevel level, const String text) const;
@@ -35,6 +37,7 @@ public:
 
 private:
 	E_Loglevel m_loglevel;
+	bool logSerial;
 	static String levelstring[4];
 
 };

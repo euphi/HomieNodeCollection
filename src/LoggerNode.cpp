@@ -9,7 +9,9 @@
 #include <Homie.hpp>
 
 LoggerNode::LoggerNode() :
-		m_loglevel(DEBUG), HomieNode("Log", "Logger") {
+		m_loglevel(DEBUG), logSerial(true), HomieNode("Log", "Logger") {
+	advertise("Level").settable();
+	advertise("LogSerial").settable();
 }
 
 String LoggerNode::levelstring[4] = { "DEBUG", "INFO", "ERROR", "CRITICAL" };
@@ -24,7 +26,7 @@ void LoggerNode::log(const String function, const E_Loglevel level,	const String
 	mqtt_path.concat('/');
 	mqtt_path.concat(function);
 	Homie.setNodeProperty(*this, mqtt_path).setRetained(false).send(text);
-	Serial.printf("%d: %s:%s\n",millis(), mqtt_path.c_str(), text.c_str());
+	if (logSerial) Serial.printf("%d: %s:%s\n",millis(), mqtt_path.c_str(), text.c_str());
 }
 
 void LoggerNode::logf(const String function, const E_Loglevel level, const char* format, ...) const {
@@ -38,5 +40,45 @@ void LoggerNode::logf(const String function, const E_Loglevel level, const char*
 	log(function, level, temp);
 }
 
-LoggerNode LN;
+bool LoggerNode::handleInput(const String& property, const HomieRange& range,
+		const String& value) {
+	if (property.equals("Level")) {
+		E_Loglevel newLevel = E_Loglevel::INVALID;
+		switch (value.c_str()[0]) {
+		case 'D':
+		case 'd':
+			newLevel = E_Loglevel::DEBUG;
+			break;
+		case 'I':
+		case 'i':
+			newLevel = E_Loglevel::INFO;
+			break;
+		case 'E':
+		case 'e':
+			newLevel = E_Loglevel::ERROR;
+			break;
+		case 'C':
+		case 'c':
+			newLevel = E_Loglevel::CRITICAL;
+			break;
+		}
+		if (newLevel >= E_Loglevel::DEBUG && newLevel <= E_Loglevel::CRITICAL) {
+			m_loglevel = newLevel;
+			logf(__PRETTY_FUNCTION__, INFO, "New loglevel set to %d", m_loglevel);
+			Homie.setNodeProperty(*this, "Level").send(levelstring[m_loglevel]);
+			return true;
+		}
+	} else if (property.equals("LogSerial")) {
+		bool on = value.equalsIgnoreCase("ON");
+		logSerial = on;
+		LN.logf("RelaisNode::handleInput()", LoggerNode::INFO,
+				"Receive command to switch 'Log to serial' %s.", on ? "On" : "Off");
+		Homie.setNodeProperty(*this, "LogSerial").send(on ? "On" : "Off");
+		return true;
+	}
+	logf(__PRETTY_FUNCTION__, ERROR,
+			"Received invalid property %s with value %s", property.c_str(),	value.c_str());
+	return false;
+}
 
+LoggerNode LN;
