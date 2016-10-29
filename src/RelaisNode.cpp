@@ -38,7 +38,7 @@ bool RelaisNode::handleInput(const String  &property, const HomieRange& range, c
 	LN.logf("RelaisNode::handleInput()", LoggerNode::INFO,
 			"Receive command to switch %x to %s.", id, on ? "On" : "Off");
 
-	uint8_t selected_bit = (1 << (id-1));
+	uint16_t selected_bit = (1 << (id-1));
 	if (on) {
 		relais_bitset |= selected_bit;
 	} else	{
@@ -70,7 +70,7 @@ bool RelaisNode::handleInput(const String  &property, const HomieRange& range, c
 
 
 void RelaisNode::updateRelais(uint16_t updateMask) {
-	static uint8_t last = 0x00;
+	static uint16_t last = 0x00;
 	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x", relais_bitset);
 	io.write16(relais_bitset);
 	for (uint_fast8_t i = 0; i < 16; i++) {
