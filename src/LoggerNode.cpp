@@ -25,7 +25,7 @@ void LoggerNode::log(const String function, const E_Loglevel level,	const String
 	String mqtt_path(levelstring[level]);
 	mqtt_path.concat('/');
 	mqtt_path.concat(function);
-	Homie.setNodeProperty(*this, mqtt_path).setRetained(false).send(text);
+	setProperty(mqtt_path).setRetained(false).send(text);
 	if (logSerial) Serial.printf("%d: %s:%s\n",millis(), mqtt_path.c_str(), text.c_str());
 }
 
@@ -65,7 +65,7 @@ bool LoggerNode::handleInput(const String& property, const HomieRange& range,
 		if (newLevel >= E_Loglevel::DEBUG && newLevel <= E_Loglevel::CRITICAL) {
 			m_loglevel = newLevel;
 			logf(__PRETTY_FUNCTION__, INFO, "New loglevel set to %d", m_loglevel);
-			Homie.setNodeProperty(*this, "Level").send(levelstring[m_loglevel]);
+			setProperty("Level").send(levelstring[m_loglevel]);
 			return true;
 		}
 	} else if (property.equals("LogSerial")) {
@@ -73,7 +73,7 @@ bool LoggerNode::handleInput(const String& property, const HomieRange& range,
 		logSerial = on;
 		LN.logf("RelaisNode::handleInput()", LoggerNode::INFO,
 				"Receive command to switch 'Log to serial' %s.", on ? "On" : "Off");
-		Homie.setNodeProperty(*this, "LogSerial").send(on ? "On" : "Off");
+		setProperty("LogSerial").send(on ? "On" : "Off");
 		return true;
 	}
 	logf(__PRETTY_FUNCTION__, ERROR,

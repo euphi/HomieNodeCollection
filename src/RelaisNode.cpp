@@ -73,14 +73,14 @@ void RelaisNode::updateRelais(uint16_t updateMask) {
 	static uint8_t last = 0x00;
 	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x", relais_bitset);
 	io.write16(relais_bitset);
-	for (uint_fast8_t i = 0; i < 8; i++) {
+	for (uint_fast8_t i = 0; i < 16; i++) {
 		bool on = ((relais_bitset & (1 << i)) != 0);
 		bool changed = on ^ (((last & (1 << i)) != 0));
 		//LN.logf("UpdateRelais", LoggerNode::DEBUG, "\nRelais: %02x\n  Last: %02x\n1 << i: %02x (%d)\nOn:%s, changed:%s", relais_bitset, last, (1<<i), i, on?"true":"false", changed?"true":"false");
 		if (changed || ((updateMask & (1 << i)) != 0)) {
 			String value("in_");
 			value.concat(i + 1);
-			Homie.setNodeProperty(*this, value).send(on ? "ON" : "OFF");
+			setProperty(value).send(on ? "ON" : "OFF");
 		}
 	}
 	last = relais_bitset;

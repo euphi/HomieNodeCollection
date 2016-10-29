@@ -59,9 +59,9 @@ void RGBWNode::updateLED(uint8_t id) const {
 
 void RGBWNode::PublishState(uint8_t id) const {
 	if (id < R || id > W) return;
-	String id_string(rgbw_id[id]);
-	String value_string((uint16_t) round((float)rgbw_values[id]/percent_to_pwm));
-	Homie.setNodeProperty(*this, id_string).send(value_string);
+	const String id_string(rgbw_id[id]);
+	const String value_string((uint16_t) round((float)rgbw_values[id]/percent_to_pwm));
+	setProperty(id_string).send(value_string);
 }
 
 void RGBWNode::setup() {
