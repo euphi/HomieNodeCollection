@@ -15,6 +15,7 @@
 class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 
 	static const float percent_to_pwm;
+	static const uint16_t /*PROGMEM*/ gamma8[];
 
 
 	enum RGB_MAP {

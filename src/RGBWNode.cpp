@@ -12,16 +12,21 @@
 
 const float RGBWNode::percent_to_pwm = PWMRANGE / 100;
 
+// Gamma correction, for details see https://learn.adafruit.com/led-tricks-gamma-correction/
+// This table maps [0%-100%] to [0-1024] (PWMRANGE of ESP8266's arduino.h)
+// See tools directory for C++ program to create table for different range
+
+const uint16_t /*PROGMEM*/ RGBWNode::gamma8[] = {
+  0,0,0,0,0,0,0,1,1,1,2,2,3,3,4,5,
+  6,7,8,10,11,13,15,17,19,21,24,26,29,32,35,39,
+  42,46,50,54,59,63,68,73,79,84,90,96,103,109,116,124,
+  131,139,147,155,164,173,182,192,202,212,223,234,245,257,269,281,
+  293,307,320,334,348,362,377,392,408,424,441,458,475,493,511,529,
+  548,568,587,608,628,650,671,693,716,739,762,786,811,836,861,887,
+  913,940,968,996,1024 };
+
+
 RGBWNode::RGBWNode() : 	HomieNode("LED", "RGBW"), initialized(false) {
-//	Serial.begin(115200);
-//	for (uint_fast8_t i=R;i<=W;i++) {
-//		char cb[2];
-//		cb[0] = rgbw_id[i];
-//		cb[1] = '\0';
-//		this->advertise(cb)->settable();
-//		Serial.printf("Registered RGWNode property no. %d to %s.\n", i, cb);
-//	}
-//	Serial.flush();
 	advertise("r").settable();
 	advertise("g").settable();
 	advertise("b").settable();
@@ -37,9 +42,14 @@ bool RGBWNode::handleInput(const String& property, const HomieRange& range, cons
 	uint_fast8_t id = R;
 	for (id=R; id <= W; id++)
 		if (property[0] == rgbw_id[id]) break;
-	if (id>W) return false;
+	if ((id > W) || (value_int < 0) || (value_int > 100)) {
+		LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR,
+				"Received value %d or property %s out of range", value_int, property.c_str());
+		return false;
+	}
 
-	rgbw_values[id] = round((float) value_int * percent_to_pwm);
+	rgbw_values[id] = gamma8[value_int];
+	LN.logf("LED-gamma-correction", LoggerNode::DEBUG, "Using value %d for %d%%", rgbw_values[id], value_int);
 	updateLED(id);
 	return true;
 }
