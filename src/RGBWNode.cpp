@@ -10,11 +10,9 @@
 #include "LoggerNode.h"
 #include "Arduino.h"
 
-const float RGBWNode::percent_to_pwm = PWMRANGE / 100;
-
 // Gamma correction, for details see https://learn.adafruit.com/led-tricks-gamma-correction/
 // This table maps [0%-100%] to [0-1024] (PWMRANGE of ESP8266's arduino.h)
-// See tools directory for C++ program to create table for different range
+// See tools directory for C++ program to create table for different ranges
 
 const uint16_t /*PROGMEM*/ RGBWNode::gamma8[] = {
   0,0,0,0,0,0,0,1,1,1,2,2,3,3,4,5,
@@ -31,8 +29,6 @@ RGBWNode::RGBWNode() : 	HomieNode("LED", "RGBW"), initialized(false) {
 	advertise("g").settable();
 	advertise("b").settable();
 	advertise("w").settable();
-
-
 }
 
 
@@ -48,8 +44,7 @@ bool RGBWNode::handleInput(const String& property, const HomieRange& range, cons
 		return false;
 	}
 
-	rgbw_values[id] = gamma8[value_int];
-	LN.logf("LED-gamma-correction", LoggerNode::DEBUG, "Using value %d for %d%%", rgbw_values[id], value_int);
+	rgbw_values[id] = value_int;
 	updateLED(id);
 	return true;
 }
@@ -61,16 +56,17 @@ void RGBWNode::updateLEDs() const {
 void RGBWNode::updateLED(uint8_t id) const {
 	if (id < R || id > W) return;
 	uint16_t value = rgbw_values[id];
+	uint16_t value_gamma = gamma8[value];
 	uint8_t pin=rgbw_pins[id];
-	LN.logf(__PRETTY_FUNCTION__, LoggerNode::INFO, "Update LED %c on Pin %d, value %d.", rgbw_id[id], pin, value);
-	analogWrite(pin, value);
+	LN.logf(__PRETTY_FUNCTION__, LoggerNode::INFO, "Update LED %c on Pin %d, value %d%% (gamma-corrected %d).", rgbw_id[id], pin, value, value_gamma);
+	analogWrite(pin, value_gamma);
 	PublishState(id);
 }
 
 void RGBWNode::PublishState(uint8_t id) const {
 	if (id < R || id > W) return;
 	const String id_string(rgbw_id[id]);
-	const String value_string((uint16_t) round((float)rgbw_values[id]/percent_to_pwm));
+	const String value_string((uint16_t) round((float)rgbw_values[id]));
 	setProperty(id_string).send(value_string);
 }
 
