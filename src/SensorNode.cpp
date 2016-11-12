@@ -31,7 +31,7 @@ void SensorNode::setup() {
 }
 
 void SensorNode::loop() {
-	if (millis() - lastLoop8000ms >= 8000UL || lastLoop8000ms == 0) {
+	if (millis() - lastLoop8000ms >= 30000UL || lastLoop8000ms == 0) {
 //		float cur_temp = Sensors::getThermometer()->getTemperature();
 //		float cur_press = Sensors::getBarometer()->getSealevelPressure(320.0);
 		temp = htu.readTemperature();
