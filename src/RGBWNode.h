@@ -30,10 +30,10 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	 */
 
 	enum RGBW_PINMAP {
-		REDPIN = 0/*12*/, GREENPIN = 2/*13*/, BLUEPIN = 15, WHITEPIN = 16
+		REDPIN = 15, GREENPIN = 2, BLUEPIN = 16, WHITEPIN = 0
 	};
 
-	const uint8_t rgbw_pins[4] = { REDPIN, GREENPIN, BLUEPIN, WHITEPIN };
+	const uint8_t rgbw_pins[4];
 	const char rgbw_id[4] = {'r', 'g', 'b', 'w'};
 	uint16_t rgbw_values[4] = { 0, 0, 0, 0 };
 
@@ -55,7 +55,7 @@ private:
     bool initialized;
 
 public:
-	RGBWNode();
+	RGBWNode(const char* name, char redpin = REDPIN, char greenpin = GREENPIN, char bluepin = BLUEPIN, char whitepin = WHITEPIN);
 	void setup();
     void onReadyToOperate();
 };

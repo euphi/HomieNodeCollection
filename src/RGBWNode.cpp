@@ -24,11 +24,15 @@ const uint16_t /*PROGMEM*/ RGBWNode::gamma8[] = {
   913,940,968,996,1024 };
 
 
-RGBWNode::RGBWNode() : 	HomieNode("LED", "RGBW"), initialized(false) {
-	advertise("r").settable();
-	advertise("g").settable();
-	advertise("b").settable();
-	advertise("w").settable();
+RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, char whitepin) :
+		HomieNode(name, "RGBW"),
+		rgbw_pins{redpin, greenpin, bluepin, whitepin},
+	    initialized(false)
+{
+	if (redpin   != 255) advertise("r").settable();
+	if (bluepin  != 255) advertise("g").settable();
+	if (greenpin != 255) advertise("b").settable();
+	if (whitepin != 255) advertise("w").settable();
 }
 
 
@@ -58,6 +62,10 @@ void RGBWNode::updateLED(uint8_t id) const {
 	uint16_t value = rgbw_values[id];
 	uint16_t value_gamma = gamma8[value];
 	uint8_t pin=rgbw_pins[id];
+	if (pin == -1) {
+		LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR, "Tried to set invalid pin");
+		return;
+	}
 	LN.logf(__PRETTY_FUNCTION__, LoggerNode::INFO, "Update LED %c on Pin %d, value %d%% (gamma-corrected %d).", rgbw_id[id], pin, value, value_gamma);
 	analogWrite(pin, value_gamma);
 	PublishState(id);
