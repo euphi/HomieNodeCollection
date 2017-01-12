@@ -13,7 +13,7 @@
   "dependencies": 
   [
   {
-    "name": "homie-esp8266",
+    "name": "Homie",
     "version": "2.0.0"
   }
   ]
