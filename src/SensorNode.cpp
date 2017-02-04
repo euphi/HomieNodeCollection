@@ -7,6 +7,7 @@
 
 #include "SensorNode.h"
 #include <Homie.hpp>
+#include "LoggerNode.h"
 
 
 SensorNode::SensorNode() :
@@ -37,9 +38,18 @@ void SensorNode::loop() {
 		temp = htu.readTemperature();
 		hum = htu.readHumidity();
 		lastLoop8000ms = millis();
-		setProperty("degrees").send(String(temp));
+		if (isnan(temp) == 0) {
+			setProperty("degrees").send(String(temp));
+		} else {
+			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read temperature on I2C");
+		}
+		if (isnan(hum) == 0) {
+			setProperty("rel%").send(String(hum));
+		} else {
+			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read humidity on I2C");
+		}
+
 //		Homie.setNodeProperty(*this, "hPa", String(cur_press));
-		setProperty("rel%").send(String(hum));
 	}
 }
 

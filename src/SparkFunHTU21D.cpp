@@ -81,7 +81,14 @@ float HTU21D::read_value(byte cmd)
 //Returns 999 if CRC is wrong
 float HTU21D::readHumidity(void)
 {
-        unsigned int rawHumidity = read_value(TRIGGER_HUMD_MEASURE_NOHOLD);
+    unsigned int rawHumidity = read_value(TRIGGER_HUMD_MEASURE_NOHOLD);
+	if (rawHumidity == 999) {
+		return NAN;
+	}
+
+	if(rawHumidity == 998) {
+		return NAN;
+	}
 	
 	//Given the raw humidity data, calculate the actual relative humidity
 	float tempRH = rawHumidity * (125.0 / 65536.0); //2^16 = 65536
@@ -95,15 +102,23 @@ float HTU21D::readHumidity(void)
 //Calc temperature and return it to the user
 //Returns 998 if I2C timed out 
 //Returns 999 if CRC is wrong
-float HTU21D::readTemperature(void)
-{
-        unsigned int rawTemperature = read_value(TRIGGER_TEMP_MEASURE_NOHOLD);
+float HTU21D::readTemperature(void) {
+	unsigned int rawTemperature = read_value(TRIGGER_TEMP_MEASURE_NOHOLD);
 
-        //Given the raw temperature data, calculate the actual temperature
+	if (rawTemperature == 999) {
+		return NAN;
+	}
+
+	if(rawTemperature == 998) {
+		return NAN;
+	}
+
+
+	//Given the raw temperature data, calculate the actual temperature
 	float tempTemperature = rawTemperature * (175.72 / 65536.0); //2^16 = 65536
 	float realTemperature = tempTemperature - 46.85; //From page 14
 
-	return(realTemperature);  
+	return (realTemperature);
 }
 
 //Set sensor resolution
