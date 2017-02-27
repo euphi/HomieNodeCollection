@@ -16,12 +16,11 @@
 #include <LoggerNode.h>
 
 OLEDStatusIndicator::OLEDStatusIndicator() :
-		wifi(false), wifi_quality(-1), mqtt(false),
-		cfgmode(false), updateNecessary(true), cycle_time(500) {
+		wifi(false), wifi_quality(-1), mqtt(false),	cfgmode(false) {
 
 }
 
-void OLEDStatusIndicator::Event(HomieEvent event) {
+void OLEDStatusIndicator::Event(const HomieEvent& event) {
 	Serial.begin(115200);
 	Serial.flush();
 	cfgmode = false;
@@ -62,10 +61,7 @@ void OLEDStatusIndicator::Event(HomieEvent event) {
 		mqtt = false;
 		break;
 	}
-	updateNecessary = true;
 	Serial.printf("Event: %s\n", last_status.c_str());
-	if (mqtt)
-		LN.log(__PRETTY_FUNCTION__,LoggerNode::INFO, "MQTT connected");
 	Serial.flush();
 
 }
@@ -87,14 +83,14 @@ void OLEDStatusIndicator::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& 
 	else if (wifi) {
 		String RSSIString;
 		int32_t rssi = WiFi.RSSI();
-		RSSIString += rssi;
-		RSSIString += " dbm";
-		display.drawXbm(0, 0, wireless_full_width, wireless_full_height,
+//		RSSIString += rssi;
+//		RSSIString += "dbm";
+		display.drawXbm(128 - conn_mqtt_width - 16, 0, wireless_full_width, wireless_full_height,
 				wireless_full_bits);
-		display.drawString(wireless_full_width, 3, RSSIString);
+//		display.drawString(48+wireless_full_width, 3, RSSIString);
 	} else {
 		if (blink_state) {
-			display.drawXbm(0, 0, wireless_full_width, wireless_full_height,
+			display.drawXbm(128 - conn_mqtt_width - 16, 0, wireless_full_width, wireless_full_height,
 					wireless_full_bits);
 		}
 	}
@@ -105,6 +101,7 @@ void OLEDStatusIndicator::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& 
 	}
 
 	// Lifesign
-	uint8_t quads = (1 << 3 - cycle4); // Draw all quads except 1
-	display.drawCircleQuads(128 - conn_mqtt_width - 8, 8, 6, quads);
+//	uint8_t quads = (1 << 3 - cycle4); // Draw all quads except 1
+//	display.drawCircleQuads(128 - 8, 8, 6, quads);
+	if (!blink_state) display.drawRect(127,0,1,1);
 }
