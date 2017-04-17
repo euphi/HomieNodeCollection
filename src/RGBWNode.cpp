@@ -53,6 +53,17 @@ bool RGBWNode::handleInput(const String& property, const HomieRange& range, cons
 	return true;
 }
 
+void RGBWNode::fadeLEDs() {
+	for (uint_fast8_t id = R;id <= W; id++) {
+		if (rgbw_values[id] != rgbw_cur_values[id]) {
+			if (rgbw_values[id] > rgbw_cur_values[id]) rgbw_cur_values[id]++;
+			else rgbw_cur_values[id]--;
+		}
+	}
+	updateLEDs();
+
+}
+
 void RGBWNode::updateLEDs() const {
 	for (uint_fast8_t i=0;i<4;i++) updateLED(i);
 }
@@ -92,6 +103,8 @@ void RGBWNode::onReadyToOperate() {
 }
 
 void RGBWNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state, int16_t x, int16_t y) {
+	fadeLEDs();  // TODO: Add loop function to Homie
+
 	display.setFont(ArialMT_Plain_10);
 	bool blink = (millis() >> 8) % 2;
 

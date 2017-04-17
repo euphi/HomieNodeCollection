@@ -36,6 +36,7 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	const uint8_t rgbw_pins[4];
 	const char rgbw_id[4] = {'r', 'g', 'b', 'w'};
 	uint16_t rgbw_values[4] = { 0, 0, 0, 0 };
+	uint16_t rgbw_cur_values[4] = { 0, 0, 0, 0 };
 
     // HomieNode
 	virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
@@ -51,6 +52,8 @@ private:
     void updateLEDs() const;
     void updateLED(uint8_t id) const;
     void PublishState(uint8_t id) const;
+
+    void fadeLEDs();
 
     bool initialized;
 
