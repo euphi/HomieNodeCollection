@@ -21,9 +21,9 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	};
 
 	/* Define output pins:
-	 *   In general, the ESP8266 only support 12mA on its GPIO (source or sink), so please connect
+	 *   In general, the ESP8266 supports only 12mA on its GPIO (source or sink), so please connect
 	 *   some current amplifier, e.g. a darlington array like ULN2003 or ULN2803.
-	 *   With these, using GPIO 0, 2 and 15 is possible, when they are pulled to GND or HIGH with
+	 *   With these using GPIO 0, 2, and 15 is possible, when they are pulled to GND or HIGH with
 	 *   e.g. 3k3 Ohm resistors.
 	 *   Note that the LED connected to PINs that are pulled to VCC (0 and 2) will be switched on
 	 *   during reset (until RGWNode::setup() is called from within Homie.setup()).
@@ -39,7 +39,11 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	uint16_t rgbw_cur_values[4] = { 0, 0, 0, 0 };
 
     // HomieNode
+	static HomieSetting<long> fadeDelay;
+	static bool settingsInitialized;
+
 	virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
+	virtual void loop() override;
 
 	// OLEDFrame
 	virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y) override;

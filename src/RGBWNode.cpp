@@ -24,11 +24,21 @@ const uint16_t /*PROGMEM*/ RGBWNode::gamma8[] = {
   913,940,968,996,1024 };
 
 
+HomieSetting<long> RGBWNode::fadeDelay ("RGBfadeDelay", "fade delay");  // id, description
+bool RGBWNode::settingsInitialized(false);
+
 RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, char whitepin) :
 		HomieNode(name, "RGBW"),
 		rgbw_pins{redpin, greenpin, bluepin, whitepin},
 	    initialized(false)
 {
+	// fadeDelay is static, so we need to take care to initialize it only once
+	if (!settingsInitialized) {
+		settingsInitialized = true;
+		fadeDelay.setDefaultValue(5).setValidator([] (long candidate) {
+			return (candidate > 0 && candidate < 200);
+		});
+	}
 	if (redpin   != 255) advertise("r").settable();
 	if (bluepin  != 255) advertise("g").settable();
 	if (greenpin != 255) advertise("b").settable();
@@ -50,18 +60,32 @@ bool RGBWNode::handleInput(const String& property, const HomieRange& range, cons
 
 	rgbw_values[id] = value_int;
 	updateLED(id);
+	PublishState(id);
 	return true;
 }
 
+void RGBWNode::loop() {
+	static unsigned long last = 0;
+	if ((last + fadeDelay.get()) < millis() ) {
+		last = millis();
+		fadeLEDs();
+	}
+}
+
 void RGBWNode::fadeLEDs() {
+	bool changed = false;
 	for (uint_fast8_t id = R;id <= W; id++) {
 		if (rgbw_values[id] != rgbw_cur_values[id]) {
-			if (rgbw_values[id] > rgbw_cur_values[id]) rgbw_cur_values[id]++;
-			else rgbw_cur_values[id]--;
+			changed = true;
+			if (rgbw_values[id] > rgbw_cur_values[id]) {
+				rgbw_cur_values[id]++;
+			} else {
+				rgbw_cur_values[id]--;
+			}
+			updateLED(id);
 		}
 	}
-	updateLEDs();
-
+	//if (changed) updateLEDs();
 }
 
 void RGBWNode::updateLEDs() const {
@@ -70,16 +94,17 @@ void RGBWNode::updateLEDs() const {
 
 void RGBWNode::updateLED(uint8_t id) const {
 	if (id < R || id > W) return;
-	uint16_t value = rgbw_values[id];
+	uint16_t value = rgbw_cur_values[id];
 	uint16_t value_gamma = gamma8[value];
 	uint8_t pin=rgbw_pins[id];
-	if (pin == -1) {
-		LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR, "Tried to set invalid pin");
-		return;
+	if (pin == 255) {
+		//LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR, "Tried to set invalid pin");
+		return; // PIN "255" reserved for UNUSED
 	}
-	LN.logf(__PRETTY_FUNCTION__, LoggerNode::INFO, "Update LED %c on Pin %d, value %d%% (gamma-corrected %d).", rgbw_id[id], pin, value, value_gamma);
 	analogWrite(pin, value_gamma);
-	PublishState(id);
+	if (rgbw_values[id] == value && LN.loglevel(LoggerNode::INFO)) {
+		LN.logf(__PRETTY_FUNCTION__, LoggerNode::INFO, "Updated LED %c on Pin %d, value %d%% (gamma-corrected %d).", rgbw_id[id], pin, value, value_gamma);
+	}
 }
 
 void RGBWNode::PublishState(uint8_t id) const {
@@ -99,12 +124,11 @@ void RGBWNode::setup() {
 void RGBWNode::onReadyToOperate() {
 	initialized = true;
 	LN.log("RGBWNode", LoggerNode::DEBUG, __PRETTY_FUNCTION__);
+	LN.logf("RGBWNode/Settings", LoggerNode::INFO, "RGBfadedelay: %d", fadeDelay.get());
 	updateLEDs();
 }
 
 void RGBWNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state, int16_t x, int16_t y) {
-	fadeLEDs();  // TODO: Add loop function to Homie
-
 	display.setFont(ArialMT_Plain_10);
 	bool blink = (millis() >> 8) % 2;
 

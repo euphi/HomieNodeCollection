@@ -22,6 +22,9 @@ public:
 
 	virtual void drawOverlay(OLEDDisplay& display,  OLEDDisplayUiState& state, uint8_t idx);
 
+	bool handleBroadcast(const String& level, const String& value);
+
+
 
 private:
 	bool mqtt;
@@ -29,6 +32,8 @@ private:
 	bool cfgmode;
 	int wifi_quality;
 	String last_status;
+	bool alert;
+	String alert_string;
 };
 
 #endif /* SRC_OLEDSTATUSINDICATOR_H_ */

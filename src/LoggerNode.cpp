@@ -14,7 +14,7 @@ LoggerNode::LoggerNode() :
 	advertise("LogSerial").settable();
 }
 
-String LoggerNode::levelstring[4] = { "DEBUG", "INFO", "ERROR", "CRITICAL" };
+const String LoggerNode::levelstring[4] = { "DEBUG", "INFO", "ERROR", "CRITICAL" };
 
 void LoggerNode::setup() {
 	//empty

@@ -38,7 +38,7 @@ public:
 private:
 	E_Loglevel m_loglevel;
 	bool logSerial;
-	static String levelstring[4];
+	static const String levelstring[4];
 
 };
 

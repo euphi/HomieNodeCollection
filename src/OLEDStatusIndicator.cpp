@@ -20,6 +20,14 @@ OLEDStatusIndicator::OLEDStatusIndicator() :
 
 }
 
+bool OLEDStatusIndicator::handleBroadcast(const String& level, const String& value) {
+	if (level.equals("alert")) {
+		alert = true;
+		alert_string = value;
+		return true;
+	}
+}
+
 void OLEDStatusIndicator::Event(const HomieEvent& event) {
 	Serial.begin(115200);
 	Serial.flush();
@@ -66,6 +74,8 @@ void OLEDStatusIndicator::Event(const HomieEvent& event) {
 
 }
 
+
+
 void OLEDStatusIndicator::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& state, uint8_t idx) {
 	static uint8_t count = 0;
 
@@ -104,4 +114,13 @@ void OLEDStatusIndicator::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& 
 //	uint8_t quads = (1 << 3 - cycle4); // Draw all quads except 1
 //	display.drawCircleQuads(128 - 8, 8, 6, quads);
 	if (!blink_state) display.drawRect(127,0,1,1);
+
+	if (alert) {
+		display.setFont(ArialMT_Plain_16);
+		display.setTextAlignment(TEXT_ALIGN_CENTER);
+		display.drawString(32,0,"!!! ALARM !!!");
+		display.setTextAlignment(TEXT_ALIGN_CENTER_BOTH);
+		display.setFont(ArialMT_Plain_24);
+		display.drawStringMaxWidth(64,32,128,alert_string);
+	}
 }
