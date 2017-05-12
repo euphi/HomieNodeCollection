@@ -25,8 +25,10 @@ void LoggerNode::log(const String function, const E_Loglevel level,	const String
 	String mqtt_path(levelstring[level]);
 	mqtt_path.concat('/');
 	mqtt_path.concat(function);
-	setProperty(mqtt_path).setRetained(false).send(text);
-	if (logSerial) Serial.printf("%d: %s:%s\n",millis(), mqtt_path.c_str(), text.c_str());
+	if (Homie.isConnected()) {
+		setProperty(mqtt_path).setRetained(false).send(text);
+	}
+	if (logSerial || !Homie.isConnected()) Serial.printf("%d: %s:%s\n",millis(), mqtt_path.c_str(), text.c_str());
 }
 
 void LoggerNode::logf(const String function, const E_Loglevel level, const char* format, ...) const {
