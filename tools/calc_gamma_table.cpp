@@ -1,14 +1,15 @@
-// Generate an LED gamma8-correction table for Arduino sketches.
-// Written in Processing (www.processing.org), NOT for Arduino!
-// Copy-and-paste the program's output into an Arduino sketch.
+//
+// Compile with
+//   g++ calc_gamma_table.cpp 
+//
 
 #include <iostream>
 #include <cmath>
 using namespace std;
  
-float gamma8   = 2.8; // Correction factor
-int   max_in  = 100, // Top end of INPUT range
-      max_out = 1024; // Top end of OUTPUT range
+float gamma8   = 2.8; // Gamma correction factor
+int   max_in  = 100, // Maximum input value, e.g 100 for 100%
+      max_out = 1024; // Maximum output value. Set this to PWMRANGE of your arduino-compatible device, e.g 1024 for ESP8266
  
 int main (int argc, char** argv) {
   cout << "const uint8_t PROGMEM gamma8[] = {";
