@@ -1,5 +1,5 @@
 .pioenvs
 /lib/
 .piolibdeps
-/.cproject.OLD
-/.project.OLD
+/.cproject
+/.project

@@ -1,6 +1,6 @@
 {
         "name": "HomieNodeCollection",
-        "version": "0.5",
+        "version": "0.6",
         "keywords": "Homie, sensor, temperature, display",
         "description": "Collection of Node implementations for the Homie-ESP8266 library.",
         "repository": {
