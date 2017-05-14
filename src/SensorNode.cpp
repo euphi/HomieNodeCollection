@@ -22,11 +22,11 @@ SensorNode::SensorNode() :
 
 void SensorNode::setup() {
 	Wire.begin();
-	Sensors::initialize();
+	//Sensors::initialize();
 	char printbuf[50];
-	snprintf(printbuf, sizeof(printbuf),
-			"Initialized sensors at %x (Thermo), %x (Baro)",
-			Sensors::getThermometer(), Sensors::getBarometer());
+	//snprintf(printbuf, sizeof(printbuf),
+	//		"Initialized sensors at %x (Thermo), %x (Baro)",
+	//		Sensors::getThermometer(), Sensors::getBarometer());
 	Serial.println(printbuf);
 	htu.begin();
 }

@@ -10,8 +10,18 @@
 
 
 #include <Wire.h>
-#define SENSORS_BMP180_ATTACHED
-#include <Sensors.h>
+
+/* For other sensors than HTU21 have a look at
+ *  
+ * https://github.com/loopj/i2c-sensor-hal
+ * 
+ * That lib is also available at platformio:
+ *   http://platformio.org/lib/show/578/Sensors
+ */
+//#define SENSORS_BMP180_ATTACHED
+//#include <Sensors.h>
+
+
 #include "SparkFunHTU21D.h"
 
 

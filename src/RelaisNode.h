@@ -10,8 +10,6 @@
 
 #include <HomieNode.hpp>
 
-#include <Atm_encoder.hpp>
-
 #include <PCF8575.h>
 
 class RelaisNode : public HomieNode {
