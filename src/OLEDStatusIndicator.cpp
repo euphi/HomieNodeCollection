@@ -16,7 +16,7 @@
 #include <LoggerNode.h>
 
 OLEDStatusIndicator::OLEDStatusIndicator() :
-		wifi(false), wifi_quality(-1), mqtt(false),	cfgmode(false) {
+		wifi(false), wifi_quality(-1), mqtt(false),	cfgmode(false), alert(false) {
 
 }
 
@@ -26,6 +26,7 @@ bool OLEDStatusIndicator::handleBroadcast(const String& level, const String& val
 		alert_string = value;
 		return true;
 	}
+	return false;
 }
 
 void OLEDStatusIndicator::Event(const HomieEvent& event) {
