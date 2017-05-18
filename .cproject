@@ -81,6 +81,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_ESP01"/>
+									<listOptionValue builtIn="false" value="__cplusplus=201402L"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.149990277" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
@@ -144,6 +145,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_ESP01"/>
+									<listOptionValue builtIn="false" value="__cplusplus=201402L"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.762536863" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
@@ -207,6 +209,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_ESP01"/>
+									<listOptionValue builtIn="false" value="__cplusplus=201402L"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.549319812" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
