@@ -1,6 +1,6 @@
 {
         "name": "HomieNodeCollection",
-        "version": "0.7",
+        "version": "0.7.1",
         "keywords": "Homie, sensor, temperature, display",
         "description": "Collection of Node implementations for the Homie-ESP8266 library.",
         "repository": {
@@ -16,7 +16,7 @@
                         "version": "https://github.com/marvinroger/homie-esp8266.git#develop"
                 },
                 {
-                        "name": "ESP8266_SSD1306",
+                        "name": "ESP8266_SSD1306_Euphi",
                         "version": "https://github.com/euphi/esp8266-oled-ssd1306.git#master"
                 }
         ]
