@@ -36,7 +36,7 @@ bool RelaisNode::handleInput(const String  &property, const HomieRange& range, c
 	}
 	bool on = value.equalsIgnoreCase("ON");
 	LN.logf("RelaisNode::handleInput()", LoggerNode::INFO,
-			"Receive command to switch %x to %s.", id, on ? "On" : "Off");
+			"Receive command to switch %d to %s.", id, on ? "On" : "Off");
 
 	uint16_t selected_bit = (1 << (id-1));
 	if (on) {
