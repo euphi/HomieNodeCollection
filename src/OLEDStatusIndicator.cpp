@@ -61,7 +61,7 @@ void OLEDStatusIndicator::Event(const HomieEvent& event) {
 		last_status = "Wi-Fi disconnected";
 		wifi = false;
 		break;
-	case HomieEventType::MQTT_CONNECTED:
+	case HomieEventType::MQTT_READY:
 		last_status = "MQTT connected";
 		mqtt = true;
 		break;
