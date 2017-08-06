@@ -30,8 +30,6 @@ bool OLEDStatusIndicator::handleBroadcast(const String& level, const String& val
 }
 
 void OLEDStatusIndicator::Event(const HomieEvent& event) {
-	Serial.begin(115200);
-	Serial.flush();
 	cfgmode = false;
 	switch (event.type) {
 	case HomieEventType::CONFIGURATION_MODE:
@@ -69,10 +67,13 @@ void OLEDStatusIndicator::Event(const HomieEvent& event) {
 		last_status = "MQTT disconnected";
 		mqtt = false;
 		break;
+	case HomieEventType::MQTT_PACKET_ACKNOWLEDGED:
+		return; // Ignore acknowledge package
+	default:
+		last_status = "Unknown";
+		LN.logf("Event", LoggerNode::WARNING, "Unknown status received (%x).", event.type);
 	}
-	Serial.printf("Event: %s\n", last_status.c_str());
-	Serial.flush();
-
+	LN.logf("Event", LoggerNode::INFO, "%02x: %s", event.type, last_status.c_str());
 }
 
 

@@ -16,12 +16,12 @@ public:
 	LoggerNode();
 
 	virtual void setup() override;
-	//void loop(); // loop() not necessary
-
-	  virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
+	//virtual void loop() override; // loop() not necessary
+	virtual void onReadyToOperate() override;
+	virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
 
 	enum E_Loglevel {
-		INVALID=-1, DEBUG=0, INFO, ERROR, CRITICAL
+		INVALID=-1, DEBUG=0, INFO, WARNING, ERROR, CRITICAL
 	};
 
 	void log(const String function, const E_Loglevel level, const String text) const;
@@ -38,7 +38,11 @@ public:
 private:
 	E_Loglevel m_loglevel;
 	bool logSerial;
-	static const String levelstring[4];
+	static const String levelstring[CRITICAL + 1 ];
+	static HomieSetting<const char*> default_loglevel;
+
+	static E_Loglevel convertToLevel(const String& level);
+
 
 };
 
