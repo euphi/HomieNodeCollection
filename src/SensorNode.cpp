@@ -52,7 +52,7 @@ void SensorNode::loop() {
 #ifdef SENSORS_BMP180_ATTACHED
 		temp = Sensors::getThermometer()->getTemperature();
 		pressure = Sensors::getBarometer()->getSealevelPressure(290);
-		if (isnan(pressure) == 0) {
+		if (isnan(pressure) == 0 && (pressure > 800) && (pressure < 1200) ) {
 			setProperty("pressure").send(String(pressure));
 		}
 #else
@@ -64,7 +64,7 @@ void SensorNode::loop() {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read humidity on I2C");
 		}
 #endif
-		if (isnan(temp) == 0) {
+		if (isnan(temp) == 0 && (temp > -50) && (temp < 150)) {
 			setProperty("degrees").send(String(temp));
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read temperature on I2C");
