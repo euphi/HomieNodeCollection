@@ -39,7 +39,7 @@ private:
 	/** Invert all OUTPUT bits */
 	bool invert;
 
-	void readI2C();
+	bool readI2C();
 	void sendI2C();
 };
 

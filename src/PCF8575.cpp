@@ -66,7 +66,9 @@ void PCF8575::write16(uint16_t value) {
 }
 
 uint16_t PCF8575::read16() {
-	readI2C();
+	if (!readI2C()) {
+		LN.log("PCF8575", LoggerNode::ERROR, "Cannot read from I2C");
+	}
 	return bs_input;
 }
 
@@ -75,12 +77,15 @@ void PCF8575::toggle(uint8_t pin) {
 	sendI2C();
 }
 
-void PCF8575::readI2C() {
+bool PCF8575::readI2C() {
 	size_t r = Wire.requestFrom(i2c_addr, (uint8_t) 0x02);
+	unsigned long ti = millis() + 1000;
 	while (Wire.available() < 2)
+		if (millis()>ti) return false;
 		;
 	bs_input = Wire.read();
 	bs_input |= Wire.read() << 8;
+	return true;
 }
 
 void PCF8575::sendI2C() {
