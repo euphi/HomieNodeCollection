@@ -39,10 +39,10 @@ RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, c
 			return (candidate > 0 && candidate < 200);
 		});
 	}
-	if (redpin   != 255) advertise("r").settable();
-	if (bluepin  != 255) advertise("g").settable();
-	if (greenpin != 255) advertise("b").settable();
-	if (whitepin != 255) advertise("w").settable();
+	if (redpin   != NOPIN) advertise("r").settable();
+	if (bluepin  != NOPIN) advertise("g").settable();
+	if (greenpin != NOPIN) advertise("b").settable();
+	if (whitepin != NOPIN) advertise("w").settable();
 }
 
 
@@ -89,7 +89,10 @@ void RGBWNode::fadeLEDs() {
 }
 
 void RGBWNode::updateLEDs() const {
-	for (uint_fast8_t i=0;i<4;i++) updateLED(i);
+	for (uint_fast8_t i=0;i<4;i++) {
+		updateLED(i);
+		PublishState(i);
+	}
 }
 
 void RGBWNode::updateLED(uint8_t id) const {
@@ -97,7 +100,7 @@ void RGBWNode::updateLED(uint8_t id) const {
 	uint16_t value = rgbw_cur_values[id];
 	uint16_t value_gamma = gamma8[value];
 	uint8_t pin=rgbw_pins[id];
-	if (pin == 255) {
+	if (pin == NOPIN) {
 		//LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR, "Tried to set invalid pin");
 		return; // PIN "255" reserved for UNUSED
 	}
@@ -109,6 +112,7 @@ void RGBWNode::updateLED(uint8_t id) const {
 
 void RGBWNode::PublishState(uint8_t id) const {
 	if (id < R || id > W) return;
+	if (rgbw_pins[id] == NOPIN) return;
 	const String id_string(rgbw_id[id]);
 	const String value_string((uint16_t) round((float)rgbw_values[id]));
 	setProperty(id_string).send(value_string);
@@ -125,6 +129,7 @@ void RGBWNode::onReadyToOperate() {
 	initialized = true;
 	LN.log("RGBWNode", LoggerNode::DEBUG, __PRETTY_FUNCTION__);
 	LN.logf("RGBWNode/Settings", LoggerNode::INFO, "RGBfadedelay: %d", fadeDelay.get());
+	delay(200);
 	updateLEDs();
 }
 

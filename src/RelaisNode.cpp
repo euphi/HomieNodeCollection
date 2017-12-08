@@ -26,13 +26,12 @@ RelaisNode::RelaisNode(uint16_t defaults, uint16_t invert, uint16_t inputmask) :
 
 void RelaisNode::setup() {
 	updateRelais(0); // write to PCF only
-
 }
-//
 
 void RelaisNode::onReadyToOperate() {
-	//LN.log("RelaisNode", LoggerNode::DEBUG, "Ready");
-	updateRelais();
+	LN.log("RelaisNode", LoggerNode::DEBUG, "Ready");
+	delay(200);
+	RelaisNode::updateRelais(0xFFFF);
 }
 
 void RelaisNode::loop() {
@@ -100,7 +99,7 @@ bool RelaisNode::handleInput(const String  &property, const HomieRange& range, c
 
 void RelaisNode::updateRelais(uint16_t updateMask) {
 	static uint16_t last = relais_bitset;
-	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x", relais_bitset);
+	LN.logf("RelaisNode::updateRelais()", LoggerNode::DEBUG, "Value: %x (Update: %x)", relais_bitset, updateMask);
 	io.write16(relais_bitset);
 	for (uint_fast8_t i = 0; i < 16; i++) {
 		bool on = ((relais_bitset & (1 << i)) != 0);

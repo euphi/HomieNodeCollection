@@ -13,9 +13,7 @@
 #include <OLEDOverlay.h>
 
 class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
-
-	static const uint16_t /*PROGMEM*/ gamma8[];
-
+public:
 	enum RGB_MAP {
 		R, G, B, W
 	};
@@ -28,11 +26,16 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	 *   Note that the LED connected to PINs that are pulled to VCC (0 and 2) will be switched on
 	 *   during reset (until RGWNode::setup() is called from within Homie.setup()).
 	 */
-
 	enum RGBW_PINMAP {
-		REDPIN = 15, GREENPIN = 2, BLUEPIN = 16, WHITEPIN = 0
+		REDPIN = 15, GREENPIN = 2, BLUEPIN = 16, WHITEPIN = 0, NOPIN = 0xFF
 	};
 
+	RGBWNode(const char* name, char redpin = REDPIN, char greenpin = GREENPIN, char bluepin = BLUEPIN, char whitepin = WHITEPIN);
+	void setup();
+    void onReadyToOperate();
+
+private:
+	static const uint16_t /*PROGMEM*/ gamma8[];
 	const uint8_t rgbw_pins[4];
 	const char rgbw_id[4] = {'r', 'g', 'b', 'w'};
 	uint16_t rgbw_values[4] = { 0, 0, 0, 0 };
@@ -51,8 +54,6 @@ class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
 	// OLEDOverlay
 	virtual void drawOverlay(OLEDDisplay& display,  OLEDDisplayUiState& state, uint8_t idx) override;
 
-
-private:
     void updateLEDs() const;
     void updateLED(uint8_t id) const;
     void PublishState(uint8_t id) const;
@@ -61,10 +62,6 @@ private:
 
     bool initialized;
 
-public:
-	RGBWNode(const char* name, char redpin = REDPIN, char greenpin = GREENPIN, char bluepin = BLUEPIN, char whitepin = WHITEPIN);
-	void setup();
-    void onReadyToOperate();
 };
 
 #endif /* SRC_RGBWNODE_H_ */
