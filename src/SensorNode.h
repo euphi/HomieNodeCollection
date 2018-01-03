@@ -55,6 +55,10 @@ public:
 		return temp;
 	}
 
+	void setTempAdjust(float tempAdjust) {
+		temp_adjust = tempAdjust;
+	}
+
 private:
 	float temp = NAN;
 #ifdef SENSORS_BMP180_ATTACHED
@@ -63,7 +67,7 @@ private:
 #ifndef SENSORS_BMP180_ATTACHED
 	float hum = NAN;
 #endif
-
+	float temp_adjust;
 };
 
 #endif /* SRC_SENSORNODE_H_ */

@@ -15,6 +15,7 @@ SensorNode::SensorNode() :
 		[](String property, HomieRange range, String value) { return false; }),
 	lastLoop8000ms(0),
 	temp(NAN),
+	temp_adjust(0),  // TODO: Use HomieSetting
 #ifndef SENSORS_BMP180_ATTACHED
 	hum (NAN),
 	htu()
@@ -56,7 +57,7 @@ void SensorNode::loop() {
 			setProperty("pressure").send(String(pressure));
 		}
 #else
-		temp = htu.readTemperature();
+		temp = htu.readTemperature() +  temp_adjust;
 		hum = htu.readHumidity();
 		if (isnan(hum) == 0) {
 			setProperty("rel%").send(String(hum));
@@ -69,7 +70,6 @@ void SensorNode::loop() {
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read temperature on I2C");
 		}
-
 //		Homie.setNodeProperty(*this, "hPa", String(cur_press));
 	}
 }
