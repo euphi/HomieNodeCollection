@@ -11,8 +11,7 @@
 
 
 SensorNode::SensorNode() :
-	HomieNode("Sensor", "sensor_t_h",
-		[](String property, HomieRange range, String value) { return false; }),
+	HomieNode("Sensor", "sensor_t_h"),
 	lastLoop8000ms(0),
 	temp(NAN),
 	temp_adjust(0),  // TODO: Use HomieSetting
@@ -31,25 +30,22 @@ SensorNode::SensorNode() :
 }
 
 void SensorNode::setup() {
-	Wire.begin();
-	//Sensors::initialize();
-	char printbuf[50];
-	//snprintf(printbuf, sizeof(printbuf),
-	//		"Initialized sensors at %x (Thermo), %x (Baro)",
-	//		Sensors::getThermometer(), Sensors::getBarometer());
-	Serial.println(printbuf);
 #ifdef SENSORS_BMP180_ATTACHED
 	Sensors::initialize();
+	char printbuf[50];
+	snprintf(printbuf, sizeof(printbuf),
+			"Initialized sensors at %x (Thermo), %x (Baro)",
+	Sensors::getThermometer(), Sensors::getBarometer());
+	Serial.println(printbuf);
+	Sensors::initialize();
 #else
-	htu.begin();
+	//htu.begin(); - this is just another call to Wire.begin(), so don't call it.
 #endif
 }
 
 void SensorNode::loop() {
 	if (millis() - lastLoop8000ms >= 30000UL || lastLoop8000ms == 0) {
 		lastLoop8000ms = millis();
-//		float cur_temp = Sensors::getThermometer()->getTemperature();
-//		float cur_press = Sensors::getBarometer()->getSealevelPressure(320.0);
 #ifdef SENSORS_BMP180_ATTACHED
 		temp = Sensors::getThermometer()->getTemperature();
 		pressure = Sensors::getBarometer()->getSealevelPressure(290);
@@ -70,7 +66,6 @@ void SensorNode::loop() {
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read temperature on I2C");
 		}
-//		Homie.setNodeProperty(*this, "hPa", String(cur_press));
 	}
 }
 
