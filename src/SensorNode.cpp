@@ -10,7 +10,7 @@
 #include "LoggerNode.h"
 
 
-HomieSetting<double> SensorNode::tempOffset ("Temperate offset", "offset to add to temperature");
+HomieSetting<double> SensorNode::tempOffset ("TempAdj", "offset to add to temperature");
 
 
 SensorNode::SensorNode() :
