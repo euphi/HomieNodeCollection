@@ -30,6 +30,7 @@ class SensorNode: public HomieNode {
 private:
 	unsigned long lastLoop8000ms;
 	static HomieSetting<double> tempOffset;
+	static HomieSetting<long> interval;
 
 	#ifndef SENSORS_BMP180_ATTACHED
 	HTU21D htu;

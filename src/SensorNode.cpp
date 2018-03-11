@@ -11,6 +11,7 @@
 
 
 HomieSetting<double> SensorNode::tempOffset ("TempAdj", "offset to add to temperature");
+HomieSetting<long> SensorNode::interval("sensorInterval", "interval how often to read sensors");
 
 
 SensorNode::SensorNode() :
@@ -28,6 +29,10 @@ SensorNode::SensorNode() :
 	tempOffset.setDefaultValue(0).setValidator([] (double candidate) {
 		return ((!isnan(candidate) || candidate == 0.0) && candidate > -15.0 && candidate < 15.0);
 	});
+	interval.setDefaultValue(30000).setValidator([] (long candidate) {
+		return (candidate > 1000 && candidate < 600000);
+	});
+
 
 	advertise("degrees");
 	advertise("rel%");
@@ -48,7 +53,7 @@ void SensorNode::setup() {
 }
 
 void SensorNode::loop() {
-	if (millis() - lastLoop8000ms >= 30000UL || lastLoop8000ms == 0) {
+	if (millis() - lastLoop8000ms >= interval.get() || lastLoop8000ms == 0) {
 		lastLoop8000ms = millis();
 #ifdef SENSORS_BMP180_ATTACHED
 		temp = Sensors::getThermometer()->getTemperature();
