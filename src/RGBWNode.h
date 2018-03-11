@@ -33,6 +33,7 @@ public:
 	RGBWNode(const char* name, char redpin = REDPIN, char greenpin = GREENPIN, char bluepin = BLUEPIN, char whitepin = WHITEPIN);
 	void setup();
     void onReadyToOperate();
+	void switchLed(const String &property, uint8_t value);
 
 private:
 	static const uint16_t /*PROGMEM*/ gamma8[];
@@ -61,6 +62,7 @@ private:
     void fadeLEDs();
 
     bool initialized;
+	bool fade_active;
 
 };
 

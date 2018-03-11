@@ -29,8 +29,9 @@
 class SensorNode: public HomieNode {
 private:
 	unsigned long lastLoop8000ms;
+	static HomieSetting<double> tempOffset;
 
-#ifndef SENSORS_BMP180_ATTACHED
+	#ifndef SENSORS_BMP180_ATTACHED
 	HTU21D htu;
 #endif
 
@@ -55,10 +56,6 @@ public:
 		return temp;
 	}
 
-	void setTempAdjust(float tempAdjust) {
-		temp_adjust = tempAdjust;
-	}
-
 private:
 	float temp = NAN;
 #ifdef SENSORS_BMP180_ATTACHED
@@ -67,7 +64,6 @@ private:
 #ifndef SENSORS_BMP180_ATTACHED
 	float hum = NAN;
 #endif
-	float temp_adjust;
 };
 
 #endif /* SRC_SENSORNODE_H_ */

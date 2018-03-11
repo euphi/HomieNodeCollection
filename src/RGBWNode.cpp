@@ -30,7 +30,8 @@ bool RGBWNode::settingsInitialized(false);
 RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, char whitepin) :
 		HomieNode(name, "RGBW"),
 		rgbw_pins{redpin, greenpin, bluepin, whitepin},
-	    initialized(false)
+	    initialized(false),
+		fade_active(true)
 {
 	// fadeDelay is static, so we need to take care to initialize it only once
 	if (!settingsInitialized) {
@@ -61,12 +62,30 @@ bool RGBWNode::handleInput(const String& property, const HomieRange& range, cons
 	rgbw_values[id] = value_int;
 	updateLED(id);
 	PublishState(id);
+	fade_active = true;
 	return true;
+}
+
+void RGBWNode::switchLed(const String &property, uint8_t value) {
+	uint_fast8_t id = R;
+	for (id=R; id <= W; id++)
+		if (property[0] == rgbw_id[id]) break;
+	if ((id > W) || (value > 100)) {
+		LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR,
+				"Internal property %s out of range", property.c_str());
+		return;
+	}
+	rgbw_values[id] = value;
+	updateLED(id);
+	PublishState(id);
+	fade_active = true;
+
 }
 
 void RGBWNode::loop() {
 	static unsigned long last = 0;
-	if ((last + fadeDelay.get()) < millis() ) {
+	
+	if (fade_active && ((last + fadeDelay.get()) < millis()) ) {
 		last = millis();
 		fadeLEDs();
 	}
@@ -85,7 +104,7 @@ void RGBWNode::fadeLEDs() {
 			updateLED(id);
 		}
 	}
-	//if (changed) updateLEDs();
+	fade_active = changed;
 }
 
 void RGBWNode::updateLEDs() const {

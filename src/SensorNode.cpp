@@ -10,11 +10,13 @@
 #include "LoggerNode.h"
 
 
+HomieSetting<double> SensorNode::tempOffset ("Temperate offset", "offset to add to temperature");
+
+
 SensorNode::SensorNode() :
 	HomieNode("Sensor", "sensor_t_h"),
 	lastLoop8000ms(0),
 	temp(NAN),
-	temp_adjust(0),  // TODO: Use HomieSetting
 #ifndef SENSORS_BMP180_ATTACHED
 	hum (NAN),
 	htu()
@@ -23,10 +25,12 @@ SensorNode::SensorNode() :
 #endif
 
 {
+	tempOffset.setDefaultValue(0).setValidator([] (double candidate) {
+		return ((!isnan(candidate) || candidate == 0.0) && candidate > -15.0 && candidate < 15.0);
+	});
+
 	advertise("degrees");
 	advertise("rel%");
-
-	//subscribeToAll();
 }
 
 void SensorNode::setup() {
@@ -53,7 +57,7 @@ void SensorNode::loop() {
 			setProperty("pressure").send(String(pressure));
 		}
 #else
-		temp = htu.readTemperature() +  temp_adjust;
+		temp = htu.readTemperature() +  tempOffset.get();
 		hum = htu.readHumidity();
 		if (isnan(hum) == 0) {
 			setProperty("rel%").send(String(hum));
