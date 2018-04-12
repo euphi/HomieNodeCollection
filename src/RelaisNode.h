@@ -27,11 +27,14 @@ protected:
 
 private:
   void updateRelais(uint16_t updateMask=0xFFFF);
+  void readInputs();
 
   uint16_t relais_bitset; // stores actual value
   uint16_t invert_bitset; // If bit is set, value written to PCF8575 will be inverted
   uint16_t input_mask;  // If bit is set, related pin will be configured as (quasi-)input
   uint16_t input_data;
+
+  uint16_t updateMaskLoop;
 
   PCF8575 io;
 
