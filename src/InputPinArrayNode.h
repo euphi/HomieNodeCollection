@@ -13,11 +13,14 @@
 
 
 class InputPinArrayNode: public HomieNode {
-
-
 public:
+	struct pin_data {
+		uint8_t pin;
+		bool closed_state;
+		bool stored_state;
+	};
 	typedef std::function<bool(uint8_t idx, bool state)> InputPinChangeEventHandler;
-	InputPinArrayNode(std::vector<uint8_t> pins, InputPinChangeEventHandler& cb);
+	InputPinArrayNode(std::vector<pin_data> pins, InputPinChangeEventHandler& cb);
 
 protected:
 	  virtual void setup() override;
@@ -25,9 +28,10 @@ protected:
 	  virtual void onReadyToOperate() override;
 
 private:
-	std::vector<uint8_t> inputPins;
-	std::vector<bool> storedPins;
-	InputPinChangeEventHandler & callback;
+	  std::vector<pin_data> inputPins;
+	  //std::vector<uint8_t> inputPins;
+	  //std::vector<bool> storedPins;
+	  InputPinChangeEventHandler & callback;
 };
 
 #endif /* SRC_INPUTPINARRAYNODE_H_ */
