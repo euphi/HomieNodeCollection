@@ -55,6 +55,7 @@ env:
 install:
     - pip install -U platformio
     - platformio lib -g install https://github.com/marvinroger/homie-esp8266.git#v2.0.0-beta.3
+    - platformio lib -g install https://github.com/euphi/esp8266-oled-ssd1306.git
     - platformio lib -g uninstall AsyncTCP 
 
 script:
