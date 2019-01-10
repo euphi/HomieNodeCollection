@@ -15,7 +15,7 @@ HomieSetting<long> SensorNode::interval("sensorInterval", "interval how often to
 
 
 SensorNode::SensorNode() :
-	HomieNode("Sensor", "sensor_t_h"),
+	HomieNode("Sensor", "Sensor (Temperatur & Luftfeuchte)", "sensor_t_h"),
 	lastLoop8000ms(0),
 	temp(NAN),
 #ifndef SENSORS_BMP180_ATTACHED
@@ -32,10 +32,8 @@ SensorNode::SensorNode() :
 	interval.setDefaultValue(30000).setValidator([] (long candidate) {
 		return (candidate > 1000 && candidate < 600000);
 	});
-
-
-	advertise("degrees");
-	advertise("rel%");
+	advertise("degrees").setName("Temperatur").setRetained(true).setUnit("°C").setDatatype("float").setFormat("-50:100");
+	advertise("relH").setName("relative Luftfeuchte").setRetained(true).setUnit("%").setDatatype("float").setFormat("0:100");
 }
 
 void SensorNode::setup() {
@@ -53,7 +51,7 @@ void SensorNode::setup() {
 }
 
 void SensorNode::loop() {
-	if (millis() - lastLoop8000ms >= interval.get() || lastLoop8000ms == 0) {
+	if (millis() - lastLoop8000ms >= (unsigned long) interval.get() || lastLoop8000ms == 0) {
 		lastLoop8000ms = millis();
 #ifdef SENSORS_BMP180_ATTACHED
 		temp = Sensors::getThermometer()->getTemperature();
@@ -65,15 +63,18 @@ void SensorNode::loop() {
 		temp = htu.readTemperature() +  tempOffset.get();
 		hum = htu.readHumidity();
 		if (isnan(hum) == 0) {
-			setProperty("rel%").send(String(hum));
+			setProperty("relH").send(String(hum));
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read humidity on I2C");
+			setProperty("relH").send(String((millis()/interval.get() % 100))); // FIXME TODO Test only
 		}
 #endif
 		if (isnan(temp) == 0 && (temp > -50) && (temp < 150)) {
 			setProperty("degrees").send(String(temp));
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read temperature on I2C");
+			setProperty("degrees").send(String(((float)(millis()/interval.get() % 100) / 10) + 15.0 )); // FIXME TODO Test only
+
 		}
 	}
 }

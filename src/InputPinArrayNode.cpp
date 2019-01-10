@@ -8,10 +8,10 @@
 #include <InputPinArrayNode.h>
 
 InputPinArrayNode::InputPinArrayNode(std::vector<pin_data> pins, InputPinChangeEventHandler& cb):
-			HomieNode("Input", "Contact"),
+			HomieNode("Input", "Contact", "Contact", true, 0,  inputPins.size()-1),
 			inputPins(pins),
 			callback(cb) {
-	advertiseRange("pin", 0, inputPins.size()-1);
+
 }
 
 void InputPinArrayNode::setup() {

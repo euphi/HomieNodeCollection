@@ -23,7 +23,7 @@ protected:
 
   virtual void onReadyToOperate() override;
 
-  virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
+  virtual bool handleInput(const HomieRange& range, const String  &property, const String &value) override;
 
 private:
   void updateRelais(uint16_t updateMask=0xFFFF);

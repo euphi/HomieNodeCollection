@@ -1,6 +1,6 @@
 {
         "name": "HomieNodeCollection",
-        "version": "0.9.3",
+        "version": "3.0.0",
         "keywords": "Homie, sensor, temperature, display",
         "description": "Collection of Node implementations for the Homie-ESP8266 library.",
         "repository": {
@@ -12,8 +12,7 @@
         "dependencies": 
         [
                 {
-                        "name": "Homie",
-                        "version": "https://github.com/marvinroger/homie-esp8266.git#v2.0.0-beta.3"
+                        "name": "Homie"
                 },
                 {
                         "name": "ESP8266_SSD1306",

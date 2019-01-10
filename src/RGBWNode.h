@@ -46,7 +46,7 @@ private:
 	static HomieSetting<long> fadeDelay;
 	static bool settingsInitialized;
 
-	virtual bool handleInput(const String  &property, const HomieRange& range, const String &value) override;
+	virtual bool handleInput(const HomieRange& range, const String  &property, const String &value) override;
 	virtual void loop() override;
 
 	// OLEDFrame
