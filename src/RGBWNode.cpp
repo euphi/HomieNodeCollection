@@ -28,7 +28,7 @@ HomieSetting<long> RGBWNode::fadeDelay ("RGBfadeDelay", "fade delay");  // id, d
 bool RGBWNode::settingsInitialized(false);
 
 RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, char whitepin) :
-		HomieNode(name, "RGBW"),
+		HomieNode(name, "RGBW-LED PWM Output", "RGBW"),
 		rgbw_pins{redpin, greenpin, bluepin, whitepin},
 	    initialized(false),
 		fade_active(true)
@@ -47,7 +47,7 @@ RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, c
 }
 
 
-bool RGBWNode::handleInput(const String& property, const HomieRange& range, const String& value) {
+bool RGBWNode::handleInput(const HomieRange& range, const String& property, const String& value) {
 	LN.logf(__PRETTY_FUNCTION__, LoggerNode::DEBUG, "Received  property %s (value=%s).", property.c_str(), value.c_str());
 	int value_int = value.toInt();
 	uint_fast8_t id = R;

@@ -11,7 +11,7 @@
 //#include <EEPROM.h>
 
 ConfigurationNode::ConfigurationNode() :
-		HomieNode("Config", "cfg") {
+		HomieNode("cfg", "Config", "Config") {
 	//subscribeToAll();
 }
 

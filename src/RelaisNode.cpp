@@ -16,7 +16,7 @@
  * @param inputmask: If a bit is set, the corresponding IO is configured as INPUT_PULLUP, if not, as OUTPUT
  */
 RelaisNode::RelaisNode(uint16_t defaults, uint16_t invert, uint16_t inputmask) :
-		HomieNode("Relais", "switch16"),
+		HomieNode("Relais", "Relais (Output)", "switch16", true, 1, 16),
 		relais_bitset((defaults^invert) | inputmask),
 		invert_bitset(invert),
 		input_mask(inputmask),
@@ -27,7 +27,6 @@ RelaisNode::RelaisNode(uint16_t defaults, uint16_t invert, uint16_t inputmask) :
 		bool in = ((input_mask & (1 << i)) != 0);
 		io.pinMode(i, in ? INPUT_PULLUP : OUTPUT);
 	}
-	advertiseRange("in",1,16).settable();
 }
 
 /** only thing to do in setup(): Initial write of output values to PCF
@@ -95,7 +94,7 @@ void RelaisNode::loop() {
  * The property is not checked (but this is done by homie when evaluating the range)
  *
  */
-bool RelaisNode::handleInput(const String  &property, const HomieRange& range, const String &value) {
+bool RelaisNode::handleInput(const HomieRange& range, const String  &property, const String &value) {
 	int16_t id = range.index;
 	if (id <= 0 || id > 16) {
 		LN.logf("RelaisNode::handleInput()", LoggerNode::ERROR,
