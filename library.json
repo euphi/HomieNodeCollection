@@ -15,10 +15,6 @@
                         "name": "Homie"
                 },
                 {
-                        "name": "ESP8266_SSD1306",
-                        "version": "https://github.com/euphi/esp8266-oled-ssd1306.git"
-                },
-                {
                         "name": "HomieLoggerNode"
                 }
         ]
