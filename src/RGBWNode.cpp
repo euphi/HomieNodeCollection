@@ -40,11 +40,11 @@ RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, c
 			return (candidate > 0 && candidate < 200);
 		});
 	}
-	if (redpin   != NOPIN) advertise("r").settable();
-	if (bluepin  != NOPIN) advertise("g").settable();
-	if (greenpin != NOPIN) advertise("b").settable();
-	if (whitepin != NOPIN) advertise("w").settable();
-	if (redpin != NOPIN && bluepin != NOPIN && greenpin != NOPIN) advertise("rgb").settable();
+	if (redpin   != NOPIN) advertise("r").settable().setDatatype("integer").setFormat("0:100");
+	if (bluepin  != NOPIN) advertise("g").settable().setDatatype("integer").setFormat("0:100");
+	if (greenpin != NOPIN) advertise("b").settable().setDatatype("integer").setFormat("0:100");
+	if (whitepin != NOPIN) advertise("w").settable().setDatatype("color").setFormat("0:100");
+	if (redpin != NOPIN && bluepin != NOPIN && greenpin != NOPIN) advertise("rgb").settable().setDatatype("color").setFormat("rgb");
 }
 
 
@@ -56,6 +56,7 @@ bool RGBWNode::handleInput(const HomieRange& range, const String& property, cons
 		int new_r = value.substring(0, r_end).toInt() * 100 / 255;
 		int new_g = value.substring(r_end+1, g_end).toInt() * 100 / 255;
 		int new_b = value.substring(g_end+1).toInt() * 100 / 255;
+		//LN.logf(__PRETTY_FUNCTION__, LoggerNode::DEBUG, "Substrings:\n\tr: %s\n\tg: %s\n\tb: %s\n", value.substring(0, r_end).c_str(), value.substring(r_end+1, g_end).c_str(), value.substring(g_end+1).c_str());
 		if (new_r >= 0 && new_r <= 100) rgbw_values[R] = new_r;
 		if (new_g >= 0 && new_g <= 100) rgbw_values[G] = new_g;
 		if (new_b >= 0 && new_b <= 100) rgbw_values[B] = new_b;
@@ -151,6 +152,15 @@ void RGBWNode::PublishState(uint8_t id) const {
 	const String id_string(rgbw_id[id]);
 	const String value_string((uint16_t) round((float)rgbw_values[id]));
 	setProperty(id_string).send(value_string);
+	if (id != W) {
+		String rgb_string;
+		rgb_string.concat(rgbw_values[R] * 255 / 100);
+		rgb_string.concat(',');
+		rgb_string.concat(rgbw_values[G] * 255 / 100);
+		rgb_string.concat(',');
+		rgb_string.concat(rgbw_values[B] * 255 / 100);
+		setProperty("rgb").send(rgb_string);
+	}
 }
 
 void RGBWNode::setup() {
