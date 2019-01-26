@@ -44,24 +44,36 @@ RGBWNode::RGBWNode(const char* name, char redpin, char greenpin, char bluepin, c
 	if (bluepin  != NOPIN) advertise("g").settable();
 	if (greenpin != NOPIN) advertise("b").settable();
 	if (whitepin != NOPIN) advertise("w").settable();
+	if (redpin != NOPIN && bluepin != NOPIN && greenpin != NOPIN) advertise("rgb").settable();
 }
 
 
 bool RGBWNode::handleInput(const HomieRange& range, const String& property, const String& value) {
 	LN.logf(__PRETTY_FUNCTION__, LoggerNode::DEBUG, "Received  property %s (value=%s).", property.c_str(), value.c_str());
-	int value_int = value.toInt();
-	uint_fast8_t id = R;
-	for (id=R; id <= W; id++)
-		if (property[0] == rgbw_id[id]) break;
-	if ((id > W) || (value_int < 0) || (value_int > 100)) {
-		LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR,
-				"Received value %d or property %s out of range", value_int, property.c_str());
-		return false;
+	if (property.equals("rgb")) {
+		uint_fast8_t r_end = value.indexOf(',');
+		uint_fast8_t g_end = value.lastIndexOf(',');
+		int new_r = value.substring(0, r_end).toInt() * 100 / 255;
+		int new_g = value.substring(r_end+1, g_end).toInt() * 100 / 255;
+		int new_b = value.substring(g_end+1).toInt() * 100 / 255;
+		if (new_r >= 0 && new_r <= 100) rgbw_values[R] = new_r;
+		if (new_g >= 0 && new_g <= 100) rgbw_values[G] = new_g;
+		if (new_b >= 0 && new_b <= 100) rgbw_values[B] = new_b;
+		updateLEDs();
+	} else {
+		int value_int = value.toInt();
+		uint_fast8_t id = R;
+		for (id=R; id <= W; id++)
+			if (property[0] == rgbw_id[id]) break;
+		if ((id > W) || (value_int < 0) || (value_int > 100)) {
+			LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR,
+					"Received value %d or property %s out of range", value_int, property.c_str());
+			return false;
+		}
+		rgbw_values[id] = value_int;
+		updateLED(id);
+		PublishState(id);
 	}
-
-	rgbw_values[id] = value_int;
-	updateLED(id);
-	PublishState(id);
 	fade_active = true;
 	return true;
 }
@@ -117,6 +129,10 @@ void RGBWNode::updateLEDs() const {
 void RGBWNode::updateLED(uint8_t id) const {
 	if (id < R || id > W) return;
 	uint16_t value = rgbw_cur_values[id];
+	if (value > 100) {
+		LN.logf(__PRETTY_FUNCTION__, LoggerNode::ERROR, "Invalid color value %d for id %d", value, id);
+		return;
+	}
 	uint16_t value_gamma = gamma8[value];
 	uint8_t pin=rgbw_pins[id];
 	if (pin == NOPIN) {
