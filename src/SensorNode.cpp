@@ -66,15 +66,12 @@ void SensorNode::loop() {
 			setProperty("relH").send(String(hum));
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read humidity on I2C");
-			setProperty("relH").send(String((millis()/interval.get() % 100))); // FIXME TODO Test only
 		}
 #endif
 		if (isnan(temp) == 0 && (temp > -50) && (temp < 150)) {
 			setProperty("degrees").send(String(temp));
 		} else {
 			LN.log("SensorNode", LoggerNode::ERROR, "Cannot read temperature on I2C");
-			setProperty("degrees").send(String(((float)(millis()/interval.get() % 100) / 10) + 15.0 )); // FIXME TODO Test only
-
 		}
 	}
 }
