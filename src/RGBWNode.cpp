@@ -168,21 +168,21 @@ void RGBWNode::onReadyToOperate() {
 	updateLEDs();
 }
 
-void RGBWNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state, int16_t x, int16_t y) {
-	display.setFont(ArialMT_Plain_10);
-	bool blink = (millis() >> 8) % 2;
-
-	for (uint_fast8_t i=0;i<=W;i++) {
-		if (blink || i != 0) {
-			String color(rgbw_id[i]);
-			color.concat(':');
-			display.drawString(0 + x, 16 + y + (i * 12), color);
-		}
-	    display.drawProgressBar(25+x,16+y+(i*12),100,10,rgbw_values[i] / 10);
-	}
-}
-
-void RGBWNode::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& state, uint8_t idx) {
-	display.setFont(ArialMT_Plain_16);
-	display.drawString(25,0,"RGBW Ctrl");
-}
+//void RGBWNode::drawFrame(OLEDDisplay& display, OLEDDisplayUiState& state, int16_t x, int16_t y) {
+//	display.setFont(ArialMT_Plain_10);
+//	bool blink = (millis() >> 8) % 2;
+//
+//	for (uint_fast8_t i=0;i<=W;i++) {
+//		if (blink || i != 0) {
+//			String color(rgbw_id[i]);
+//			color.concat(':');
+//			display.drawString(0 + x, 16 + y + (i * 12), color);
+//		}
+//	    display.drawProgressBar(25+x,16+y+(i*12),100,10,rgbw_values[i] / 10);
+//	}
+//}
+//
+//void RGBWNode::drawOverlay(OLEDDisplay& display, OLEDDisplayUiState& state, uint8_t idx) {
+//	display.setFont(ArialMT_Plain_16);
+//	display.drawString(25,0,"RGBW Ctrl");
+//}

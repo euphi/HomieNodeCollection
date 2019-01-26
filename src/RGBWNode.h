@@ -9,10 +9,10 @@
 #define SRC_RGBWNODE_H_
 
 #include <HomieNode.hpp>
-#include <OLEDFrame.h>
-#include <OLEDOverlay.h>
+//#include <OLEDFrame.h>
+//#include <OLEDOverlay.h>
 
-class RGBWNode: public HomieNode,  OLEDFrame, OLEDOverlay {
+class RGBWNode: public HomieNode /*,  OLEDFrame, OLEDOverlay */{
 public:
 	enum RGB_MAP {
 		R, G, B, W
@@ -49,11 +49,11 @@ private:
 	virtual bool handleInput(const HomieRange& range, const String  &property, const String &value) override;
 	virtual void loop() override;
 
-	// OLEDFrame
-	virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y) override;
-
-	// OLEDOverlay
-	virtual void drawOverlay(OLEDDisplay& display,  OLEDDisplayUiState& state, uint8_t idx) override;
+//	// OLEDFrame
+//	virtual void drawFrame(OLEDDisplay& display,  OLEDDisplayUiState& state, int16_t x, int16_t y) override;
+//
+//	// OLEDOverlay
+//	virtual void drawOverlay(OLEDDisplay& display,  OLEDDisplayUiState& state, uint8_t idx) override;
 
     void updateLEDs() const;
     void updateLED(uint8_t id) const;
