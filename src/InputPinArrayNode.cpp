@@ -8,16 +8,17 @@
 #include <InputPinArrayNode.h>
 
 InputPinArrayNode::InputPinArrayNode(std::vector<pin_data> pins, InputPinChangeEventHandler& cb):
-			HomieNode("Input", "Contact", "Contact", true, 0,  inputPins.size()-1),
+			HomieNode("Input", "Contact", "Contact", true, 0,  pins.size()-1),
 			inputPins(pins),
 			callback(cb) {
-
+	advertise("pin").setDatatype("boolean");
 }
 
 void InputPinArrayNode::setup() {
 	for (pin_data pin : inputPins) {
 		pinMode(pin.pin, INPUT_PULLUP);
 	}
+	setRunLoopDisconnected(true);
 }
 
 void InputPinArrayNode::loop() {

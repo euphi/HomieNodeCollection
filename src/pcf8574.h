@@ -39,9 +39,9 @@ public:
 	int lastError();
 
 private:
-	int _address;
-	uint8_t _data;
 	int _error;
+	uint8_t _data;
+	int _address;
 };
 
 #endif
