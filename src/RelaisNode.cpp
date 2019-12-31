@@ -27,6 +27,7 @@ RelaisNode::RelaisNode(uint16_t defaults, uint16_t invert, uint16_t inputmask) :
 		bool in = ((input_mask & (1 << i)) != 0);
 		io.pinMode(i, in ? INPUT_PULLUP : OUTPUT);
 	}
+	advertise("io").setName("I/O").setDatatype("boolean").settable();
 }
 
 /** only thing to do in setup(): Initial write of output values to PCF
@@ -67,7 +68,7 @@ void RelaisNode::readInputs() {
 }
 
 /** loop() is called every cycle from Homie
- * Overrides the HomieNode::loop() method. Every 8th cycle it checks the inputs for changes.
+ * Overrides the HomieNode::loop() method. Every 16th cycle it checks the inputs for changes.
  * Furthermore it updates the outputs if a change has occured.
  * To do the actual change of output within the loop() function is necessary
  * because the handleInput() method is running in the network task of the NON-OS SDK
@@ -80,7 +81,7 @@ void RelaisNode::readInputs() {
  */
 void RelaisNode::loop() {
 	static uint_fast8_t count = 0;
-	if ((++count % 8)==0) readInputs(); // read I2C on every 8th cycle only
+	if ((++count % 16)==0) readInputs(); // read I2C on every 16th cycle only
 	if (updateMaskLoop) {
 		updateRelais(updateMaskLoop);
 		updateMaskLoop = 0x0000;
