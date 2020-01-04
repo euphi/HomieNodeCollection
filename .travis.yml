@@ -50,7 +50,7 @@ cache:
         - "~/.platformio"
 
 env:
-    - PLATFORMIO_CI_SRC=examples/example.cpp examples/InputPinArray_Example.cpp
+    - PLATFORMIO_CI_SRC=examples/InputPinArray_Example.cpp
 
 
 install:
@@ -61,4 +61,4 @@ install:
       #   - platformio lib -g uninstall AsyncTCP 
 
 script:
-    - platformio ci --lib="." examples --board=esp01
+    - platformio ci --lib="." examples --board=esp12e
