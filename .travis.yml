@@ -61,4 +61,5 @@ install:
       #   - platformio lib -g uninstall AsyncTCP 
 
 script:
-    - platformio ci --lib="." examples --board=esp12e
+    - platformio ci --lib="." examples/InputPinArray_Example.cpp --board=esp12e
+    - platformio ci --lib="." examples/example.cpp --board=esp12e
