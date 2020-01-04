@@ -8,7 +8,9 @@
 
 #define FW_NAME "HNC_InputPinArrayExample"
 
-#define FW_VERSION "1.0.0"
+#define FW_VERSION "3.0.0"
+
+LoggerNode LN;
 
 // Two white  only LED strips on GPIO 0 and 2
 RGBWNode white1("LED_W1", RGBWNode::NOPIN, RGBWNode::NOPIN, RGBWNode::NOPIN, 0);
