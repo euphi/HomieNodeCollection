@@ -1,6 +1,5 @@
-.pioenvs
+.pio
 /lib/
-.piolibdeps
 /.cproject
 /.project
 /.settings
