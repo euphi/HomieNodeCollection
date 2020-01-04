@@ -13,13 +13,17 @@ The percentage is converted to a gamma-corrected value for the ESP8266 PWM outpu
 The output pin for each R, G, B, or W value can be set (or disabled) individually.
 To connect even more LED strips, a second instance can be instantiated.
 
+## InputPinArrayNode
+
+Reads input GPIOs and publish them as "OPEN" or "CLOSED" on MQTT according to Homie convention. It also supports an callback function the connect other Nodes. See https://github.com/euphi/HomieNodeCollection/blob/master/examples/InputPinArray_Example.cpp for an example how to switch LED strips (RGGWNode) based on input pins.
+
 ## RelaisNode
 
 HomieNode that exposes 16 outputs of a PCF8575 module to the Homie MQTT broker.
-Inputs are not yet supported (*TODO!*).
+_Note_ : No longer maintained, because I made some bad experience with the reliability of the PCF8575. Therefore I use MCP23017 now. See my project https://github.com/euphi/ESP_Heizungscontroller/tree/develop_v3_mcp23017 about how to use it.
+
+
 
 ## LoggerNode
 
-Helper HomieNode that can be used for logging.
-The log level property is settable.
-
+Please note: LoggerNode is no longer a part of HomieNodeCollect, but an own library now. See https://github.com/euphi/HomieLoggerNode
