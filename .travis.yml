@@ -50,14 +50,15 @@ cache:
         - "~/.platformio"
 
 env:
-    - PLATFORMIO_CI_SRC=examples/main.cpp
+    - PLATFORMIO_CI_SRC=examples/example.cpp examples/InputPinArray_Example.cpp
+
 
 install:
     - pip install -U platformio
-    - platformio lib -g install https://github.com/euphi/esp8266-oled-ssd1306.git
+      #   - platformio lib -g install https://github.com/euphi/esp8266-oled-ssd1306.git
     - platformio lib -g install HomieLoggerNode
-    - platformio lib -g install https://github.com/marvinroger/homie-esp8266.git#v2.0.0-beta.3    
-    - platformio lib -g uninstall AsyncTCP 
+    - platformio lib -g install Homie    
+      #   - platformio lib -g uninstall AsyncTCP 
 
 script:
     - platformio ci --lib="." examples --board=esp01
