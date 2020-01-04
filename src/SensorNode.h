@@ -28,11 +28,17 @@
 
 class SensorNode: public HomieNode {
 private:
-	unsigned long lastLoop8000ms;
 	static HomieSetting<double> tempOffset;
 	static HomieSetting<long> interval;
 
-	#ifndef SENSORS_BMP180_ATTACHED
+	unsigned long lastLoop8000ms;
+	float temp = NAN;
+
+#ifdef SENSORS_BMP180_ATTACHED
+	float pressure;
+#endif
+#ifndef SENSORS_BMP180_ATTACHED
+	float hum = NAN;
 	HTU21D htu;
 #endif
 
@@ -57,14 +63,6 @@ public:
 		return temp;
 	}
 
-private:
-	float temp = NAN;
-#ifdef SENSORS_BMP180_ATTACHED
-	float pressure;
-#endif
-#ifndef SENSORS_BMP180_ATTACHED
-	float hum = NAN;
-#endif
 };
 
 #endif /* SRC_SENSORNODE_H_ */
