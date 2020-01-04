@@ -20,6 +20,7 @@ RGBWNode rgb("LED", 2, 15, 0, 16);
 // HTU21 Sensor
 SensorNode sensor;
 
+LoggerNode LN;
 
 void setup() {
         Homie.disableResetTrigger();
