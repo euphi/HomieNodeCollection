@@ -1,4 +1,4 @@
-# HomieNodeCollection
+# HomieNodeCollection [![Build Status](https://travis-ci.org/euphi/HomieNodeCollection.svg?branch=master)](https://travis-ci.org/euphi/HomieNodeCollection)
 
 This is a collection of useful nodes for Homie. It makes use of object-orientation, so each HomieNode class can work standalone.
 
