@@ -20,7 +20,8 @@ SensorNode::SensorNode() :
 	temp(NAN),
 #ifndef SENSORS_BMP180_ATTACHED
 	hum (NAN),
-	htu()
+	htu(),
+	callback(0)
 #else
 	pressure(NAN)
 #endif
@@ -62,6 +63,7 @@ void SensorNode::loop() {
 #else
 		temp = htu.readTemperature() +  tempOffset.get();
 		hum = htu.readHumidity();
+		if (callback) callback(temp, hum, NAN);
 		if (isnan(hum) == 0) {
 			setProperty("relH").send(String(hum));
 		} else {

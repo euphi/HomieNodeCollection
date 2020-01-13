@@ -27,6 +27,7 @@
 #include <HomieNode.hpp>
 
 class SensorNode: public HomieNode {
+    typedef std::function<bool(float temp, float hrel, float pressure)> EnvDataChangedCallback;
 private:
 	static HomieSetting<double> tempOffset;
 	static HomieSetting<long> interval;
@@ -41,11 +42,16 @@ private:
 	float hum = NAN;
 	HTU21D htu;
 #endif
+	EnvDataChangedCallback callback;
 
 public:
 	SensorNode();
 	void setup();
 	void loop();
+	void setEnvDataCallback(const EnvDataChangedCallback &callback) {
+		this->callback = callback;
+	}
+
 
 #ifndef SENSORS_BMP180_ATTACHED
 	float getHumidity() const {
